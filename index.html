@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit Gammes — François Lurton</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #F7F4EF;
+  --ink: #1A1714;
+  --ink-soft: #5C5650;
+  --ink-muted: #A09890;
+  --gold: #B8995A;
+  --gold-light: #EDE5D0;
+  --red-wine: #6B1F2A;
+  --success: #3D6B50;
+  --border: #E2DDD5;
+  --white: #FFFFFF;
+}
+html, body { height: 100%; background: var(--cream); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* WELCOME */
+#screen-welcome { justify-content: center; align-items: center; padding: 2rem; text-align: center; }
+.welcome-inner { max-width: 440px; width: 100%; }
+.logo-mark { margin: 0 auto 2rem; display: block; opacity: 0.8; }
+.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
+.display-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 7vw, 3.2rem); font-weight: 300; line-height: 1.05; color: var(--ink); margin-bottom: 1rem; }
+.subtitle { font-size: 14px; color: var(--ink-soft); margin-bottom: 2rem; line-height: 1.7; }
+.time-pill { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--white); border: 1px solid var(--border); border-radius: 100px; padding: 0.5rem 1.25rem; font-size: 13px; color: var(--ink-soft); margin-bottom: 2.5rem; }
+.field-wrap { text-align: left; margin-bottom: 1.25rem; }
+.field-label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.5rem; }
+.field-input { width: 100%; padding: 0.9rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--white); font-size: 16px; font-family: 'Inter', sans-serif; color: var(--ink); outline: none; transition: border-color 0.2s; }
+.field-input:focus { border-color: var(--gold); }
+.field-input::placeholder { color: var(--ink-muted); }
+.btn-primary { width: 100%; padding: 1rem; background: var(--ink); color: var(--white); border: none; border-radius: 8px; font-size: 15px; font-family: 'Inter', sans-serif; font-weight: 500; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+.btn-primary:hover { background: var(--red-wine); }
+.btn-primary:active { transform: scale(0.99); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; background: var(--ink); }
+.resume-banner { background: var(--gold-light); border: 1px solid var(--gold); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 13px; display: none; }
+.resume-banner strong { display: block; margin-bottom: 0.2rem; font-weight: 500; font-size: 14px; }
+.resume-actions { display: flex; gap: 0.75rem; margin-top: 0.75rem; }
+.btn-sm { padding: 0.45rem 1rem; border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 500; cursor: pointer; border: none; }
+.btn-sm.dark { background: var(--ink); color: var(--white); }
+.btn-sm.light { background: transparent; color: var(--ink-soft); border: 1px solid var(--border); }
+
+/* PROGRESS */
+.prog-bar-wrap { height: 3px; background: var(--border); position: sticky; top: 0; z-index: 100; }
+.prog-bar-fill { height: 100%; background: var(--gold); transition: width 0.5s ease; }
+
+/* TOP NAV */
+.top-nav { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--cream); }
+.nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 400; }
+.nav-meta { font-size: 12px; color: var(--ink-muted); font-weight: 500; }
+
+/* CONTENT */
+.content { flex: 1; padding: 2rem 1.5rem; max-width: 600px; width: 100%; margin: 0 auto; }
+.section-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
+.section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.7rem, 5vw, 2.4rem); font-weight: 400; line-height: 1.1; margin-bottom: 0.5rem; }
+.section-hint { font-size: 13px; color: var(--ink-soft); margin-bottom: 2rem; }
+
+/* GAMME LIST */
+.gamme-list { display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1.5rem; }
+.gamme-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.gamme-card:hover { border-color: var(--gold); }
+.gamme-card.done { border-color: var(--success); background: #F0F7F2; }
+.gamme-card.in-progress { border-color: var(--gold); background: #FBF8F2; }
+.gamme-info { flex: 1; }
+.gamme-name { font-size: 15px; font-weight: 500; }
+.gamme-count { font-size: 12px; color: var(--ink-muted); margin-top: 0.1rem; }
+.gamme-status-icon { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; font-weight: 500; }
+.gamme-status-icon.done { background: var(--success); border-color: var(--success); }
+.gamme-status-icon.progress { background: var(--gold-light); border-color: var(--gold); color: var(--ink-soft); }
+
+/* CRITERIA */
+.criteria-list { display: flex; flex-direction: column; gap: 2rem; }
+.criterion { border-bottom: 1px solid var(--border); padding-bottom: 1.75rem; }
+.criterion:last-child { border-bottom: none; }
+.crit-label { font-size: 15px; font-weight: 500; margin-bottom: 0.2rem; }
+.crit-desc { font-size: 12px; color: var(--ink-muted); margin-bottom: 1rem; }
+.score-row { display: flex; gap: 0.4rem; flex-wrap: nowrap; }
+.score-btn { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--white); font-size: 13px; font-weight: 500; color: var(--ink-soft); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: 'Inter', sans-serif; flex-shrink: 0; }
+.score-btn:hover { border-color: var(--gold); color: var(--ink); }
+.score-btn.active-low { background: var(--red-wine); border-color: var(--red-wine); color: white; }
+.score-btn.active-mid { background: var(--gold); border-color: var(--gold); color: white; }
+.score-btn.active-high { background: var(--success); border-color: var(--success); color: white; }
+.score-scale { display: flex; justify-content: space-between; margin-top: 0.4rem; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.04em; }
+
+/* COMMENT */
+.comment-block { margin-top: 0.5rem; }
+.comment-lbl { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.5rem; }
+.comment-block textarea { width: 100%; min-height: 80px; padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--white); font-size: 14px; font-family: 'Inter', sans-serif; color: var(--ink); resize: vertical; outline: none; transition: border-color 0.2s; line-height: 1.5; }
+.comment-block textarea:focus { border-color: var(--gold); }
+.comment-block textarea::placeholder { color: var(--ink-muted); }
+
+/* BOTTOM NAV */
+.bottom-nav { padding: 1.1rem 1.5rem; border-top: 1px solid var(--border); background: var(--cream); display: flex; gap: 0.75rem; max-width: 600px; width: 100%; margin: 0 auto; }
+.btn-back { padding: 0.85rem 1.1rem; background: transparent; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--ink-soft); cursor: pointer; transition: border-color 0.2s; white-space: nowrap; }
+.btn-back:hover { border-color: var(--ink-soft); }
+.btn-next { flex: 1; padding: 0.85rem; background: var(--ink); color: var(--white); border: none; border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.btn-next:hover { background: var(--red-wine); }
+
+/* DOTS NAV */
+.dots-nav { display: flex; align-items: center; gap: 6px; padding: 0.75rem 1.5rem; background: var(--white); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.dots-nav::-webkit-scrollbar { display: none; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; cursor: pointer; transition: all 0.2s; }
+.dot.done { background: var(--gold); }
+.dot.current { background: var(--ink); width: 20px; border-radius: 4px; }
+
+/* SUCCESS FLASH */
+.flash { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 500; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+.flash.show { opacity: 1; }
+.flash-ring { width: 70px; height: 70px; border-radius: 50%; background: var(--ink); display: flex; align-items: center; justify-content: center; transform: scale(0.4); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.flash.show .flash-ring { transform: scale(1); }
+
+/* SYNCING */
+.syncing { position: fixed; inset: 0; background: rgba(247,244,239,0.93); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 400; }
+.syncing.show { display: flex; }
+.spinner { width: 30px; height: 30px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.syncing-label { font-size: 13px; color: var(--ink-soft); }
+
+/* COMPLETE */
+#screen-complete { justify-content: center; align-items: center; padding: 2rem; text-align: center; }
+.complete-inner { max-width: 380px; }
+.complete-emoji { font-size: 3rem; margin-bottom: 1.5rem; }
+.complete-title { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 300; line-height: 1.1; margin-bottom: 1rem; }
+.complete-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 2rem; line-height: 1.7; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+.stat-box { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem; }
+.stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 400; }
+.stat-lbl { font-size: 11px; color: var(--ink-muted); margin-top: 0.1rem; }
+
+/* CONFIG */
+#screen-config { justify-content: center; align-items: center; padding: 2rem; }
+.config-inner { max-width: 440px; width: 100%; }
+.config-title { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 400; margin-bottom: 0.5rem; }
+.config-desc { font-size: 13px; color: var(--ink-soft); margin-bottom: 2rem; line-height: 1.6; }
+.config-hint { font-size: 11px; color: var(--ink-muted); margin-top: 0.35rem; }
+.skip-link { display: block; text-align: center; margin-top: 1rem; font-size: 13px; color: var(--ink-muted); cursor: pointer; text-decoration: underline; background: none; border: none; font-family: 'Inter', sans-serif; width: 100%; }
+
+@media (max-width: 380px) {
+  .score-btn { width: 28px; height: 28px; font-size: 11px; }
+  .score-row { gap: 0.25rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="flash" id="flash">
+  <div class="flash-ring">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+</div>
+
+<div class="syncing" id="syncing">
+  <div class="spinner"></div>
+  <div class="syncing-label">Envoi en cours…</div>
+</div>
+
+<!-- CONFIG -->
+<div class="screen active" id="screen-config">
+  <div class="config-inner">
+    <div class="eyebrow">Premier démarrage</div>
+    <div class="config-title">Configuration</div>
+    <div class="config-desc">Renseignez l'URL de votre Google Sheet pour centraliser les réponses. Cette étape n'est faite qu'une seule fois.</div>
+    <div class="field-wrap">
+      <label class="field-label">URL Google Apps Script</label>
+      <input class="field-input" type="url" id="sheetUrl" placeholder="https://script.google.com/macros/s/…" />
+      <div class="config-hint">L'URL est fournie après déploiement de votre script Apps Script.</div>
+    </div>
+    <button class="btn-primary" onclick="saveConfig()">Enregistrer et continuer</button>
+    <button class="skip-link" onclick="skipConfig()">Continuer sans Google Sheets (mode test)</button>
+  </div>
+</div>
+
+<!-- WELCOME -->
+<div class="screen" id="screen-welcome">
+  <div class="welcome-inner" style="margin:auto; padding:2rem;">
+    <svg class="logo-mark" width="40" height="56" viewBox="0 0 40 56" fill="none">
+      <path d="M20 2C20 2 8 16 8 30C8 38.837 13.373 46 20 46C26.627 46 32 38.837 32 30C32 16 20 2 20 2Z" stroke="#B8995A" stroke-width="1.5" fill="none"/>
+      <line x1="20" y1="46" x2="20" y2="53" stroke="#B8995A" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="14" y1="53" x2="26" y2="53" stroke="#B8995A" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <div class="eyebrow">François Lurton</div>
+    <h1 class="display-title">Audit<br>des gammes</h1>
+    <p class="subtitle">Votre retour terrain est essentiel.<br>Notez chaque référence de 1 à 10.</p>
+    <div class="time-pill">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8995A" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Environ 45 min · 11 gammes · 72 références
+    </div>
+    <div class="resume-banner" id="resumeBanner">
+      <strong>Session en cours retrouvée</strong>
+      <span id="resumeText"></span>
+      <div class="resume-actions">
+        <button class="btn-sm dark" onclick="resumeSession()">Reprendre</button>
+        <button class="btn-sm light" onclick="clearAndReset()">Recommencer</button>
+      </div>
+    </div>
+    <div class="field-wrap">
+      <label class="field-label">Votre prénom</label>
+      <input class="field-input" type="text" id="userName" placeholder="Ex : Sophie" autocomplete="given-name" oninput="checkName()" />
+    </div>
+    <button class="btn-primary" id="btnStart" disabled onclick="startAudit()">Commencer →</button>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="screen" id="screen-overview">
+  <div class="prog-bar-wrap"><div class="prog-bar-fill" id="progFill" style="width:0%"></div></div>
+  <div class="top-nav">
+    <div class="nav-brand">Audit gammes</div>
+    <div class="nav-meta" id="overviewMeta"></div>
+  </div>
+  <div class="content">
+    <div class="section-eyebrow">Vue d'ensemble</div>
+    <h2 class="section-title">Choisissez<br>une gamme</h2>
+    <p class="section-hint">Évaluez d'abord la gamme, puis chacune de ses références.</p>
+    <div class="gamme-list" id="gammeList"></div>
+  </div>
+</div>
+
+<!-- GAMME EVAL -->
+<div class="screen" id="screen-gamme">
+  <div class="top-nav">
+    <div class="nav-brand" id="gNavBrand"></div>
+    <div class="nav-meta" id="gNavMeta"></div>
+  </div>
+  <div class="content">
+    <div class="section-eyebrow">Évaluation gamme</div>
+    <h2 class="section-title" id="gTitle"></h2>
+    <p class="section-hint">Notez cette gamme dans son ensemble.</p>
+    <div class="criteria-list" id="gCriteria"></div>
+    <div style="margin-top:2rem">
+      <div class="comment-lbl">Commentaire général sur la gamme</div>
+      <div class="comment-block"><textarea id="gComment" placeholder="Points forts, points faibles, suggestions…"></textarea></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="btn-back" onclick="goOverview()">← Retour</button>
+    <button class="btn-next" onclick="validateGamme()">Évaluer les références →</button>
+  </div>
+</div>
+
+<!-- REF EVAL -->
+<div class="screen" id="screen-ref">
+  <div class="top-nav">
+    <div class="nav-brand" id="rNavBrand"></div>
+    <div class="nav-meta" id="rNavMeta"></div>
+  </div>
+  <div class="dots-nav" id="dotsNav"></div>
+  <div class="content">
+    <div class="section-eyebrow" id="rEyebrow"></div>
+    <h2 class="section-title" id="rTitle"></h2>
+    <p class="section-hint">Notez cette référence de 1 à 10.</p>
+    <div class="criteria-list" id="rCriteria"></div>
+    <div style="margin-top:2rem">
+      <div class="comment-lbl">Point fort ou frein principal</div>
+      <div class="comment-block"><textarea id="rComment" placeholder="Ce qui marche, ce qui bloque…"></textarea></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="btn-back" id="btnBack" onclick="prevRef()">←</button>
+    <button class="btn-next" id="btnNext" onclick="nextRef()">Référence suivante →</button>
+  </div>
+</div>
+
+<!-- COMPLETE -->
+<div class="screen" id="screen-complete">
+  <div class="complete-inner" style="margin:auto;">
+    <div class="complete-emoji">🍷</div>
+    <h2 class="complete-title">Merci,<br><span id="completeName"></span> !</h2>
+    <p class="complete-sub">Votre audit est complet. Toutes vos évaluations ont été transmises avec succès.</p>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-num">11</div><div class="stat-lbl">Gammes évaluées</div></div>
+      <div class="stat-box"><div class="stat-num">72</div><div class="stat-lbl">Références notées</div></div>
+    </div>
+    <button class="btn-primary" onclick="restartAudit()">Nouvel audit</button>
+  </div>
+</div>
+
+<script>
+const CATALOGUE = [
+  { gamme: "Domaine du Mas Janeil", refs: ["Le Pas de la Mule","Arrels","Traou de l'Ouille","Autèntic","C2","Sarrat del Mas","Le Petit Pas Rouge","Le Petit Pas Blanc","Les Hauts de Janeil Rouge","Les Hauts de Janeil Blanc","Maury Grenat","Maury Tuilé"] },
+  { gamme: "Domaine de Nizas", refs: ["Domaine de Nizas Blanc","Domaine de Nizas Rouge","Le Clos Rosé Terroir Basalte","Le Clos Rouge Terroir Basalte","Mazet de Nizas Rouge","Mazet de Nizas Blanc"] },
+  { gamme: "Domaine de Targuerie", refs: ["Rouge","Blanc","Sélection Tardive"] },
+  { gamme: "Là, Là & Là", refs: ["Là, Là & Là"] },
+  { gamme: "Escapades Vagabondes", refs: ["Rouge","Rosé","Blanc"] },
+  { gamme: "Les Erles", refs: ["Cuvée des Ardoises"] },
+  { gamme: "La Mule", refs: ["La Mule Rose en Provence","La Mule BIB 5L (Rouge/Rosé/Blanc)"] },
+  { gamme: "Les Salices", refs: ["Pinot Noir","Viognier","Chardonnay","Sauvignon"] },
+  { gamme: "Bodegas Campo Eliseo", refs: ["Contracomente","Harmonía","Campo Eliseo Toro","Campo Eliseo Rueda","Cuvée Alegre Toro","Cuvée Alegre Rueda","Campesino","Hermanos Lurton Tempranillo","Hermanos Lurton Verdejo","Hermanos Lurton Sauvignon Blanc","Hermanos Lurton Cuesta de Oro"] },
+  { gamme: "Bodega Piedra Negra", refs: ["Chacayes","L'Esprit de Chacayes","Gran Malbec","Gran Lurton Corte","Gran Lurton Corte Friulano","Malbec Reserve","Arroyo Grande Malbec (Vino Natural)","Arroyo Grande Cabernet Franc (Vino Natural)","Arroyo Grande Criolla (Vino Natural)","Alta Colección Malbec","Alta Colección Torrontés","Alta Colección Pinot Gris","Alta Colección Pinot Gris Rosado"] },
+  { gamme: "Hacienda Araucano", refs: ["Alka","Gran Araucano","Clo Tinto","Clo Blanco","Humo Blanco Sauvignon Blanc","Humo Blanco Chardonnay","Humo Blanco Pinot Noir","Humo Blanco Cabernet Franc","Humo Blanco Cabernet Sauvignon","Humo Blanco Carmenere","L'Atelier Carmenere","L'Atelier Naranjo","L'Atelier Syrah-Viognier","Une Pinot Noir Rosé","Une Pet Nat"] },
+];
+
+const GAMME_CRIT = [
+  { id:"positionnement", label:"Positionnement & clarté", desc:"La gamme est-elle clairement positionnée (entrée / milieu / haut de gamme) ?" },
+  { id:"identite", label:"Cohérence visuelle", desc:"Les étiquettes et packagings sont-ils cohérents entre eux ?" },
+  { id:"competitivite", label:"Compétitivité prix", desc:"Les prix sont-ils justifiés face à la concurrence ?" },
+  { id:"argumentaire", label:"Facilité à argumenter", desc:"Disposez-vous d'éléments différenciants clairs à mettre en avant ?" },
+  { id:"storytelling", label:"Histoire & storytelling", desc:"Y a-t-il un récit vendeur fort autour de cette gamme ?" },
+];
+
+const REF_CRIT = [
+  { id:"qualite_prix", label:"Rapport qualité/prix", desc:"Le prix est-il justifié aux yeux du client ?" },
+  { id:"etiquette", label:"Attractivité de l'étiquette", desc:"L'étiquette donne-t-elle envie à première vue ?" },
+  { id:"facilite_vente", label:"Facilité à vendre", desc:"Ce vin est-il simple à proposer et à défendre ?" },
+  { id:"retours", label:"Retours clients", desc:"Les clients en parlent-ils positivement, en reprennent-ils ?" },
+];
+
+let S = { userName:'', sheetUrl:'', gi:0, ri:0, gScores:{}, rScores:{}, done:{} };
+const TOTAL_REFS = CATALOGUE.reduce((a,g)=>a+g.refs.length,0);
+
+function save() { try { localStorage.setItem('lurton_v2', JSON.stringify(S)); } catch(e){} }
+function load() { try { const d=localStorage.getItem('lurton_v2'); return d?JSON.parse(d):null; } catch(e){return null;} }
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+window.onload = function() {
+  const url = localStorage.getItem('lurton_sheet_url');
+  if (url) { S.sheetUrl = url; show('screen-welcome'); checkResume(); }
+};
+
+function saveConfig() {
+  const url = document.getElementById('sheetUrl').value.trim();
+  S.sheetUrl = url;
+  if (url) localStorage.setItem('lurton_sheet_url', url);
+  show('screen-welcome'); checkResume();
+}
+function skipConfig() { S.sheetUrl = ''; show('screen-welcome'); checkResume(); }
+
+function checkResume() {
+  const d = load();
+  if (d && d.userName && Object.keys(d.done||{}).length > 0) {
+    const cnt = Object.keys(d.done).length;
+    document.getElementById('resumeText').textContent = ` ${cnt} gamme(s) complétée(s) sur ${CATALOGUE.length}.`;
+    document.getElementById('resumeBanner').style.display = 'block';
+    document.getElementById('userName').value = d.userName;
+    checkName();
+  }
+}
+
+function resumeSession() {
+  const d = load();
+  if (d) { S = {...S, ...d}; document.getElementById('userName').value = S.userName; }
+  show('screen-overview'); renderOverview();
+}
+
+function clearAndReset() {
+  localStorage.removeItem('lurton_v2');
+  document.getElementById('resumeBanner').style.display = 'none';
+  S.gScores={}; S.rScores={}; S.done={}; S.gi=0; S.ri=0;
+}
+
+function checkName() {
+  document.getElementById('btnStart').disabled = document.getElementById('userName').value.trim().length < 2;
+}
+
+function startAudit() {
+  S.userName = document.getElementById('userName').value.trim();
+  save(); show('screen-overview'); renderOverview();
+}
+
+// ── OVERVIEW ─────────────────────────────────────────────────────
+function renderOverview() {
+  const list = document.getElementById('gammeList');
+  list.innerHTML = '';
+  let doneRefs = 0;
+
+  CATALOGUE.forEach((g, gi) => {
+    const isDone = !!S.done[gi];
+    const refsDone = S.rScores[gi] ? Object.keys(S.rScores[gi]).length : 0;
+    const inProg = !isDone && (S.gScores[gi] || refsDone > 0);
+    if (isDone) doneRefs += g.refs.length; else doneRefs += refsDone;
+
+    const card = document.createElement('div');
+    card.className = 'gamme-card' + (isDone?' done':inProg?' in-progress':'');
+    card.onclick = () => openGamme(gi);
+
+    let icon = '';
+    if (isDone) icon = `<div class="gamme-status-icon done"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>`;
+    else if (inProg) icon = `<div class="gamme-status-icon progress">${refsDone}/${g.refs.length}</div>`;
+    else icon = `<div class="gamme-status-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C0B8B0" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>`;
+
+    card.innerHTML = `<div class="gamme-info"><div class="gamme-name">${g.gamme}</div><div class="gamme-count">${g.refs.length} référence${g.refs.length>1?'s':''}</div></div>${icon}`;
+    list.appendChild(card);
+  });
+
+  const pct = Math.round(doneRefs/TOTAL_REFS*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('overviewMeta').textContent = `${doneRefs}/${TOTAL_REFS} références`;
+
+  if (Object.keys(S.done).length === CATALOGUE.length) setTimeout(showComplete, 400);
+}
+
+// ── GAMME EVAL ────────────────────────────────────────────────────
+function openGamme(gi) {
+  S.gi = gi; S.ri = 0;
+  const g = CATALOGUE[gi];
+  document.getElementById('gNavBrand').textContent = g.gamme;
+  document.getElementById('gNavMeta').textContent = `${gi+1}/${CATALOGUE.length}`;
+  document.getElementById('gTitle').textContent = g.gamme;
+  renderGammeCrit(gi);
+  show('screen-gamme');
+}
+
+function renderGammeCrit(gi) {
+  const saved = S.gScores[gi] || {};
+  document.getElementById('gCriteria').innerHTML = GAMME_CRIT.map(c => buildCrit(c, saved[c.id], `setGScore(${gi},'${c.id}',`)).join('');
+  document.getElementById('gComment').value = saved.comment || '';
+}
+
+function buildCrit(c, val, onclickPrefix) {
+  const btns = [1,2,3,4,5,6,7,8,9,10].map(n => {
+    const cls = val===n ? ` ${n>=8?'active-high':n>=5?'active-mid':'active-low'}` : '';
+    return `<button class="score-btn${cls}" onclick="${onclickPrefix}${n},this)">${n}</button>`;
+  }).join('');
+  return `<div class="criterion"><div class="crit-label">${c.label}</div><div class="crit-desc">${c.desc}</div><div class="score-row">${btns}</div><div class="score-scale"><span>Insuffisant</span><span>Excellent</span></div></div>`;
+}
+
+function setGScore(gi, cid, score, btn) {
+  if (!S.gScores[gi]) S.gScores[gi] = {};
+  S.gScores[gi][cid] = score;
+  save();
+  btn.closest('.score-row').querySelectorAll('.score-btn').forEach((b,i) => {
+    b.className = 'score-btn';
+    if (i+1===score) b.classList.add(score>=8?'active-high':score>=5?'active-mid':'active-low');
+  });
+  flash();
+}
+
+function validateGamme() {
+  if (!S.gScores[S.gi]) S.gScores[S.gi] = {};
+  S.gScores[S.gi].comment = document.getElementById('gComment').value;
+  save(); openRefs();
+}
+
+function goOverview() {
+  if (S.gScores[S.gi]) S.gScores[S.gi].comment = document.getElementById('gComment').value;
+  save(); show('screen-overview'); renderOverview();
+}
+
+// ── REF EVAL ──────────────────────────────────────────────────────
+function openRefs() { S.ri = 0; renderRef(); show('screen-ref'); }
+
+function renderRef() {
+  const gi = S.gi, ri = S.ri;
+  const g = CATALOGUE[gi];
+  const ref = g.refs[ri];
+  const saved = (S.rScores[gi]||{})[ri] || {};
+  const isLast = ri === g.refs.length - 1;
+
+  document.getElementById('rNavBrand').textContent = g.gamme;
+  document.getElementById('rNavMeta').textContent = `${ri+1}/${g.refs.length}`;
+  document.getElementById('rEyebrow').textContent = g.gamme;
+  document.getElementById('rTitle').textContent = ref;
+  document.getElementById('btnBack').textContent = ri===0 ? '← Gamme' : '←';
+  document.getElementById('btnNext').textContent = isLast ? 'Valider la gamme ✓' : 'Référence suivante →';
+  document.getElementById('rComment').value = saved.comment || '';
+
+  // Dots
+  const dots = document.getElementById('dotsNav');
+  dots.innerHTML = '';
+  g.refs.forEach((_,i) => {
+    const d = document.createElement('div');
+    const isDone = S.rScores[gi] && S.rScores[gi][i] && Object.keys(S.rScores[gi][i]).some(k=>k!=='comment');
+    d.className = 'dot' + (i===ri?' current':isDone?' done':'');
+    d.onclick = () => { saveRef(); S.ri=i; renderRef(); window.scrollTo(0,0); };
+    dots.appendChild(d);
+  });
+
+  document.getElementById('rCriteria').innerHTML = REF_CRIT.map(c => buildCrit(c, saved[c.id], `setRScore(${gi},${ri},'${c.id}',`)).join('');
+}
+
+function setRScore(gi, ri, cid, score, btn) {
+  if (!S.rScores[gi]) S.rScores[gi] = {};
+  if (!S.rScores[gi][ri]) S.rScores[gi][ri] = {};
+  S.rScores[gi][ri][cid] = score;
+  save();
+  btn.closest('.score-row').querySelectorAll('.score-btn').forEach((b,i) => {
+    b.className = 'score-btn';
+    if (i+1===score) b.classList.add(score>=8?'active-high':score>=5?'active-mid':'active-low');
+  });
+  flash();
+}
+
+function saveRef() {
+  const gi=S.gi, ri=S.ri;
+  if (!S.rScores[gi]) S.rScores[gi]={};
+  if (!S.rScores[gi][ri]) S.rScores[gi][ri]={};
+  S.rScores[gi][ri].comment = document.getElementById('rComment').value;
+  save();
+}
+
+function prevRef() {
+  saveRef();
+  if (S.ri===0) { openGamme(S.gi); return; }
+  S.ri--; renderRef(); window.scrollTo(0,0);
+}
+
+function nextRef() {
+  saveRef();
+  const g = CATALOGUE[S.gi];
+  if (S.ri === g.refs.length-1) { submitGamme(S.gi); return; }
+  S.ri++; renderRef(); window.scrollTo(0,0);
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────
+async function submitGamme(gi) {
+  S.done[gi] = true; save();
+  if (S.sheetUrl) {
+    document.getElementById('syncing').classList.add('show');
+    try {
+      const g = CATALOGUE[gi];
+      const payload = {
+        commercial: S.userName,
+        gamme: g.gamme,
+        timestamp: new Date().toISOString(),
+        gamme_scores: S.gScores[gi]||{},
+        references: Object.entries(S.rScores[gi]||{}).map(([i,sc])=>({ reference: g.refs[+i], ...sc }))
+      };
+      await fetch(S.sheetUrl, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    } catch(e) { console.warn(e); }
+    document.getElementById('syncing').classList.remove('show');
+  }
+  flash();
+  setTimeout(()=>{ show('screen-overview'); renderOverview(); }, 600);
+}
+
+// ── COMPLETE ──────────────────────────────────────────────────────
+function showComplete() {
+  document.getElementById('completeName').textContent = S.userName;
+  show('screen-complete');
+}
+
+function restartAudit() {
+  localStorage.removeItem('lurton_v2');
+  S = { userName:'', sheetUrl:S.sheetUrl, gi:0, ri:0, gScores:{}, rScores:{}, done:{} };
+  show('screen-welcome');
+  document.getElementById('resumeBanner').style.display='none';
+  document.getElementById('userName').value='';
+  document.getElementById('btnStart').disabled=true;
+}
+
+// ── ANIMATION ─────────────────────────────────────────────────────
+function flash() {
+  const el = document.getElementById('flash');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 550);
+}
+</script>
+</body>
+</html>
