@@ -49,6 +49,29 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 .btn-sm.dark { background: var(--ink); color: var(--white); }
 .btn-sm.light { background: transparent; color: var(--ink-soft); border: 1px solid var(--border); }
 
+/* LANG TOGGLE */
+.lang-toggle {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 700;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  padding: 0.4rem 0.85rem;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  color: var(--ink-soft);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: border-color 0.2s, color 0.2s;
+}
+.lang-toggle:hover { border-color: var(--gold); color: var(--ink); }
+
 /* PROGRESS */
 .prog-bar-wrap { height: 3px; background: var(--border); position: sticky; top: 0; z-index: 100; }
 .prog-bar-fill { height: 100%; background: var(--gold); transition: width 0.5s ease; }
@@ -176,6 +199,18 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 .criterion.has-error .crit-label::after { content:" *"; color:#B33; }
 .criterion.has-error .score-row .score-btn { border-color:#F5C0C0; }
 
+/* LANG SCREEN */
+#screen-lang { justify-content: center; align-items: center; min-height: 100vh; }
+.lang-inner { max-width: 360px; width: 100%; padding: 2rem; text-align: center; }
+.lang-title { font-family: 'EB Garamond', serif; font-size: 2rem; font-weight: 300; margin-bottom: 0.5rem; }
+.lang-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 2.5rem; }
+.lang-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.lang-btn { padding: 1.25rem; border: 1.5px solid var(--border); border-radius: 12px; background: var(--white); cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+.lang-btn:hover { border-color: var(--gold); background: var(--gold-light); }
+.lang-btn .lang-flag { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+.lang-btn .lang-name { font-size: 15px; font-weight: 500; color: var(--ink); display: block; }
+.lang-btn .lang-native { font-size: 12px; color: var(--ink-muted); display: block; margin-top: 0.1rem; }
+
 @media (max-width: 380px) {
   .score-btn { width: 28px; height: 28px; font-size: 11px; }
   .score-row { gap: 0.25rem; }
@@ -186,16 +221,44 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 
 <div class="syncing" id="syncing">
   <div class="spinner"></div>
-  <div class="syncing-label">Envoi en cours…</div>
+  <div class="syncing-label" id="syncingLabel">Envoi en cours…</div>
 </div>
+
+<button class="lang-toggle" id="langToggle" onclick="toggleLang()">
+  <span id="langToggleFlag">🇬🇧</span>
+  <span id="langToggleLabel">EN</span>
+</button>
 
 <div class="toast" id="toast">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toastMsg">Gamme envoyé avec succès</span>
 </div>
 
+<!-- LANG -->
+<div class="screen active" id="screen-lang">
+  <div class="lang-inner" style="margin:auto;">
+    <svg viewBox="0 0 237.54 93.74" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:140px;height:auto;margin:0 auto 2rem;display:block;opacity:0.85;">
+      <path fill="#B8995A" d="M124.33,0s-.08.02-.11.06l.04.23c.14.15.42.45.52.61.43.67.3,1.06-.23,1.67-.5.57-.97,1.03-3.57,3.63l-2.94,2.94c-1.6,1.6-2.91,2.92-3.7,3.53-.4.31-.75.54-1.06.54-.12,0-.22-.03-.33-.1-.19-.11-.41-.28-.56-.43v-3.92c0-3.68,0-4.33.04-5.08.04-.84.23-1.24.92-1.35.28-.05.61-.07.78-.07.1,0,.19-.04.19-.14,0-.14-.12-.19-.37-.19-.71,0-2.43.07-2.55.07s-1.6-.07-2.66-.07c-.27,0-.38.05-.38.19,0,.1.1.14.2.14.21,0,.61.03.8.07.78.17.97.54,1.01,1.35.05.75.05,1.41.05,5.08v4.16c0,2.26,0,4.12-.12,5.11-.09.68-.21,1.2-.68,1.3-.2.05-.48.09-.69.09l-2.77-2.77c-2.61-2.6-3.07-3.07-3.57-3.63-.55-.62-.7-1.04-.3-1.61.17-.23.38-.48.5-.59l.04-.24s-.07-.05-.11-.05c-.08,0-.17.06-.29.18-.5.51-1.67,1.77-1.75,1.85-.09.08-1.18,1.08-1.93,1.83-.19.19-.23.3-.13.4l.23-.03c.15-.15.45-.42.61-.52.27-.17.5-.26.72-.26.31,0,.6.17.95.5.57.5,1.04.97,3.64,3.57l2.93,2.93c1.61,1.6,2.92,2.92,3.54,3.7.41.55.69,1,.43,1.4-.11.18-.28.41-.43.56h-3.92c-3.68,0-4.34,0-5.1-.05-.83-.04-1.22-.23-1.35-.92-.05-.28-.07-.61-.07-.77,0-.1-.04-.19-.14-.19-.13,0-.19.12-.19.37,0,.71.07,2.43.07,2.55s-.07,1.61-.07,2.66c0,.26.05.38.19.38.11,0,.14-.1.14-.19,0-.21.03-.61.07-.8.17-.77.54-.97,1.35-1.01.76-.05,1.41-.05,5.1-.05h4.15c2.26,0,4.12,0,5.11.11.69.1,1.21.22,1.3.68.05.21.1.49.1.7l-2.78,2.77c-2.6,2.6-3.06,3.06-3.63,3.57-.38.34-.68.53-.99.53-.19,0-.39-.07-.61-.23-.23-.16-.49-.38-.6-.5l-.23-.04c-.11.11-.05.22.13.4.5.51,1.77,1.67,1.86,1.76.08.08,1.08,1.18,1.83,1.94.12.11.21.18.29.18.04,0,.08-.02.11-.06l-.04-.23c-.14-.14-.41-.44-.51-.61-.44-.66-.3-1.07.23-1.67.51-.57.97-1.03,3.57-3.63l2.94-2.94c1.6-1.6,2.91-2.92,3.7-3.53.4-.3.75-.54,1.06-.54.11,0,.23.03.33.1.19.11.41.27.56.43v3.92c0,3.68,0,4.34-.04,5.1-.05.83-.24,1.22-.92,1.34-.29.05-.61.08-.77.08-.1,0-.2.04-.2.13,0,.14.12.2.38.2.7,0,2.42-.07,2.55-.07.12,0,1.6.07,2.66.07.26,0,.37-.05.37-.2,0-.09-.09-.13-.19-.13-.21,0-.61-.03-.8-.08-.78-.16-.97-.54-1.01-1.34-.05-.75-.05-1.41-.05-5.1v-4.15c0-2.26,0-4.13.12-5.11.1-.68.21-1.21.68-1.3.22-.04.49-.1.69-.1l2.78,2.78c2.6,2.6,3.07,3.07,3.57,3.63.55.62.7,1.04.3,1.6-.17.24-.38.49-.5.6l-.04.23s.07.05.11.05c.07,0,.17-.07.29-.19.5-.5,1.67-1.77,1.75-1.85.09-.09,1.18-1.08,1.94-1.84.19-.19.23-.3.13-.4l-.23.04c-.15.15-.45.42-.62.51-.27.18-.5.26-.71.26-.31,0-.6-.17-.96-.49-.56-.5-1.03-.97-3.63-3.57l-2.94-2.94c-1.6-1.59-2.91-2.91-3.53-3.69-.42-.55-.69-1-.43-1.4.11-.19.27-.41.42-.56h3.92c3.68,0,4.34,0,5.1.04.83.05,1.22.24,1.34.92.04.29.07.61.07.78,0,.09.05.19.14.19.14,0,.19-.11.19-.37,0-.71-.07-2.43-.07-2.56,0-.12.07-1.6.07-2.66,0-.26-.04-.37-.19-.37-.1,0-.14.09-.14.19,0,.21-.03.61-.07.8-.16.78-.54.97-1.34,1.02-.75.04-1.42.04-5.1.04h-4.15c-2.26,0-4.13,0-5.12-.12-.68-.1-1.2-.21-1.3-.69-.04-.2-.09-.48-.09-.68l2.77-2.78c2.6-2.6,3.07-3.06,3.64-3.57.37-.34.68-.52.99-.52.19,0,.39.08.61.23.23.16.48.38.6.5l.23.04c.1-.11.05-.22-.13-.4-.51-.51-1.77-1.67-1.86-1.76-.08-.08-1.07-1.18-1.83-1.93-.12-.12-.22-.19-.29-.19"/>
+    </svg>
+    <div class="lang-title">Choose your language</div>
+    <div class="lang-sub">Sélectionnez votre langue / Select your language</div>
+    <div class="lang-btns">
+      <button class="lang-btn" onclick="setLang('fr')">
+        <span class="lang-flag">🇫🇷</span>
+        <span class="lang-name">Français</span>
+        <span class="lang-native">French</span>
+      </button>
+      <button class="lang-btn" onclick="setLang('en')">
+        <span class="lang-flag">🇬🇧</span>
+        <span class="lang-name">English</span>
+        <span class="lang-native">Anglais</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- WELCOME -->
-<div class="screen active" id="screen-welcome">
+<div class="screen" id="screen-welcome">
   <div class="welcome-inner" style="margin:auto; padding:2rem;">
     <svg class="logo-mark" viewBox="0 0 237.54 93.74" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:180px;height:auto;margin:0 auto 2rem;display:block;">
       <path fill="#B8995A" d="M124.33,0s-.08.02-.11.06l.04.23c.14.15.42.45.52.61.43.67.3,1.06-.23,1.67-.5.57-.97,1.03-3.57,3.63l-2.94,2.94c-1.6,1.6-2.91,2.92-3.7,3.53-.4.31-.75.54-1.06.54-.12,0-.22-.03-.33-.1-.19-.11-.41-.28-.56-.43v-3.92c0-3.68,0-4.33.04-5.08.04-.84.23-1.24.92-1.35.28-.05.61-.07.78-.07.1,0,.19-.04.19-.14,0-.14-.12-.19-.37-.19-.71,0-2.43.07-2.55.07s-1.6-.07-2.66-.07c-.27,0-.38.05-.38.19,0,.1.1.14.2.14.21,0,.61.03.8.07.78.17.97.54,1.01,1.35.05.75.05,1.41.05,5.08v4.16c0,2.26,0,4.12-.12,5.11-.09.68-.21,1.2-.68,1.3-.2.05-.48.09-.69.09l-2.77-2.77c-2.61-2.6-3.07-3.07-3.57-3.63-.55-.62-.7-1.04-.3-1.61.17-.23.38-.48.5-.59l.04-.24s-.07-.05-.11-.05c-.08,0-.17.06-.29.18-.5.51-1.67,1.77-1.75,1.85-.09.08-1.18,1.08-1.93,1.83-.19.19-.23.3-.13.4l.23-.03c.15-.15.45-.42.61-.52.27-.17.5-.26.72-.26.31,0,.6.17.95.5.57.5,1.04.97,3.64,3.57l2.93,2.93c1.61,1.6,2.92,2.92,3.54,3.7.41.55.69,1,.43,1.4-.11.18-.28.41-.43.56h-3.92c-3.68,0-4.34,0-5.1-.05-.83-.04-1.22-.23-1.35-.92-.05-.28-.07-.61-.07-.77,0-.1-.04-.19-.14-.19-.13,0-.19.12-.19.37,0,.71.07,2.43.07,2.55s-.07,1.61-.07,2.66c0,.26.05.38.19.38.11,0,.14-.1.14-.19,0-.21.03-.61.07-.8.17-.77.54-.97,1.35-1.01.76-.05,1.41-.05,5.1-.05h4.15c2.26,0,4.12,0,5.11.11.69.1,1.21.22,1.3.68.05.21.1.49.1.7l-2.78,2.77c-2.6,2.6-3.06,3.06-3.63,3.57-.38.34-.68.53-.99.53-.19,0-.39-.07-.61-.23-.23-.16-.49-.38-.6-.5l-.23-.04c-.11.11-.05.22.13.4.5.51,1.77,1.67,1.86,1.76.08.08,1.08,1.18,1.83,1.94.12.11.21.18.29.18.04,0,.08-.02.11-.06l-.04-.23c-.14-.14-.41-.44-.51-.61-.44-.66-.3-1.07.23-1.67.51-.57.97-1.03,3.57-3.63l2.94-2.94c1.6-1.6,2.91-2.92,3.7-3.53.4-.3.75-.54,1.06-.54.11,0,.23.03.33.1.19.11.41.27.56.43v3.92c0,3.68,0,4.34-.04,5.1-.05.83-.24,1.22-.92,1.34-.29.05-.61.08-.77.08-.1,0-.2.04-.2.13,0,.14.12.2.38.2.7,0,2.42-.07,2.55-.07.12,0,1.6.07,2.66.07.26,0,.37-.05.37-.2,0-.09-.09-.13-.19-.13-.21,0-.61-.03-.8-.08-.78-.16-.97-.54-1.01-1.34-.05-.75-.05-1.41-.05-5.1v-4.15c0-2.26,0-4.13.12-5.11.1-.68.21-1.21.68-1.3.22-.04.49-.1.69-.1l2.78,2.78c2.6,2.6,3.07,3.07,3.57,3.63.55.62.7,1.04.3,1.6-.17.24-.38.49-.5.6l-.04.23s.07.05.11.05c.07,0,.17-.07.29-.19.5-.5,1.67-1.77,1.75-1.85.09-.09,1.18-1.08,1.94-1.84.19-.19.23-.3.13-.4l-.23.04c-.15.15-.45.42-.62.51-.27.18-.5.26-.71.26-.31,0-.6-.17-.96-.49-.56-.5-1.03-.97-3.63-3.57l-2.94-2.94c-1.6-1.59-2.91-2.91-3.53-3.69-.42-.55-.69-1-.43-1.4.11-.19.27-.41.42-.56h3.92c3.68,0,4.34,0,5.1.04.83.05,1.22.24,1.34.92.04.29.07.61.07.78,0,.09.05.19.14.19.14,0,.19-.11.19-.37,0-.71-.07-2.43-.07-2.56,0-.12.07-1.6.07-2.66,0-.26-.04-.37-.19-.37-.1,0-.14.09-.14.19,0,.21-.03.61-.07.8-.16.78-.54.97-1.34,1.02-.75.04-1.42.04-5.1.04h-4.15c-2.26,0-4.13,0-5.12-.12-.68-.1-1.2-.21-1.3-.69-.04-.2-.09-.48-.09-.68l2.77-2.78c2.6-2.6,3.07-3.06,3.64-3.57.37-.34.68-.52.99-.52.19,0,.39.08.61.23.23.16.48.38.6.5l.23.04c.1-.11.05-.22-.13-.4-.51-.51-1.77-1.67-1.86-1.76-.08-.08-1.07-1.18-1.83-1.93-.12-.12-.22-.19-.29-.19M118.63,18.11c-.35-.27-.69-.6-1.06-.98-1.31-1.3-1.62-1.85-1.62-2.38,0-.59.96-1.69,3.31-4.05,0,.74.07,1.95.07,2.15,0,.97-.07,2.03-.11,3.76l-.04.15c-.06.43-.28.96-.56,1.34M115.73,18.89c-1.84,0-2.46-.16-2.83-.54-.42-.42-.51-1.88-.51-5.2.52.51,1.43,1.33,1.57,1.47.68.68,1.38,1.48,2.57,2.73l.09.13c.25.35.48.89.55,1.35-.43.05-.91.06-1.44.06M120.18,18.64c-.05-.43-.06-.92-.06-1.44,0-1.84.17-2.45.54-2.82.42-.43,1.88-.52,5.21-.52-.52.53-1.34,1.43-1.48,1.57-.67.68-1.48,1.38-2.73,2.58l-.12.08c-.35.26-.89.48-1.35.55M126.15,20.81c-.97,0-2.03-.07-3.76-.11l-.15-.03c-.42-.07-.96-.28-1.33-.56.26-.35.59-.7.97-1.07,1.31-1.3,1.85-1.62,2.39-1.62.59,0,1.69.96,4.04,3.31-.74,0-1.95.07-2.15.07M113.28,23.06c-.59,0-1.7-.97-4.05-3.31.75,0,1.96-.07,2.16-.07.97,0,2.03.07,3.76.1l.15.04c.42.07.96.28,1.33.56-.27.35-.6.69-.97,1.07-1.3,1.3-1.85,1.62-2.39,1.62M118.67,20.78c-.14-.12-.26-.19-.35-.22-.02-.19-.05-.32-.1-.42.12-.14.19-.25.23-.36.18-.02.31-.04.41-.1.14.12.26.19.35.23.02.19.05.32.1.42-.12.13-.19.25-.23.35-.19.02-.31.05-.41.1M125.16,27.34c-.52-.52-1.43-1.33-1.57-1.47-.69-.68-1.39-1.48-2.58-2.73l-.09-.13c-.25-.35-.48-.88-.55-1.34.43-.06.91-.07,1.44-.07,1.84,0,2.45.17,2.83.54.41.42.51,1.88.51,5.21M111.67,26.63c.52-.53,1.33-1.44,1.47-1.58.68-.68,1.48-1.38,2.73-2.57l.14-.09c.34-.25.87-.48,1.34-.54.05.43.06.91.06,1.43,0,1.85-.17,2.45-.54,2.83-.43.42-1.88.52-5.21.52M118.27,29.78c0-.74-.07-1.95-.07-2.16,0-.97.07-2.02.12-3.76l.04-.15c.06-.42.27-.96.56-1.33.34.27.69.6,1.06.97,1.31,1.3,1.62,1.86,1.62,2.39,0,.59-.97,1.7-3.32,4.05"/>
@@ -226,22 +289,22 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
         <path fill="#B8995A" d="M235.7,85.42c0,1.28,0,2.53.04,3.18-.14.24-.7.45-1.18.45-.02,0-.68-1.01-1.62-2.15l-4.61-5.65c-1.14-1.42-1.81-2.23-2.17-2.53-.1.2-.1.53-.1,1.26v3.83c0,1.6.08,3.08.3,3.61.18.41.64.53,1.16.63l.56.08c.16.16.12.57,0,.69-1.08-.04-1.87-.06-2.67-.06-.74,0-1.48.02-2.23.06-.12-.12-.16-.53,0-.69l.34-.06c.54-.12.92-.24,1.1-.65.2-.53.28-2.01.28-3.61v-5.02c0-1.09,0-1.4-.14-1.68-.14-.34-.44-.53-1.14-.67l-.56-.08c-.14-.16-.12-.63.08-.69.94.04,1.93.06,2.75.06.68,0,1.26-.02,1.67-.06.2.89,1.49,2.39,3.29,4.5l1.67,1.95c.9,1.03,1.46,1.72,1.91,2.17.08-.2.08-.53.08-.89v-2.73c0-1.6-.08-3.08-.3-3.61-.18-.41-.62-.53-1.16-.63l-.54-.08c-.16-.16-.12-.57,0-.69,1.08.04,1.85.06,2.67.06.74,0,1.46-.02,2.23-.06.12.12.16.53,0,.69l-.36.06c-.52.12-.9.24-1.08.65-.22.53-.3,2.01-.3,3.61v4.72Z"/>
       </g>
     </svg>
-    <h1 class="display-title">Audit des gammes</h1>
-    <p class="subtitle">Merci d'avance pour vos retours.<br>Chaque référence / gamme est à noter de 1 à 10.</p>
-    <div class="time-pill">
+    <h1 class="display-title" id="welcomeTitle">Audit des gammes</h1>
+    <p class="subtitle" id="welcomeIntro">Merci d'avance pour vos retours.<br>Chaque référence / gamme est à noter de 1 à 10.</p>
+    <div class="time-pill" id="timePill">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8995A" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Environ 45 min · 11 gammes · 72 références
+      <span id="timePillText">Environ 45 min · 11 gammes · 72 références</span>
     </div>
     <div class="resume-banner" id="resumeBanner">
-      <strong>Session en cours retrouvée</strong>
+      <strong id="resumeFoundText">Session en cours retrouvée</strong>
       <span id="resumeText"></span>
       <div class="resume-actions">
-        <button class="btn-sm dark" onclick="resumeSession()">Reprendre</button>
-        <button class="btn-sm light" onclick="clearAndReset()">Recommencer</button>
+        <button class="btn-sm dark" id="btnResume" onclick="resumeSession()">Reprendre</button>
+        <button class="btn-sm light" id="btnRestart" onclick="clearAndReset()">Recommencer</button>
       </div>
     </div>
     <div class="field-wrap">
-      <label class="field-label">Votre prénom</label>
+      <label class="field-label" id="nameLabel">Votre prénom</label>
       <input class="field-input" type="text" id="userName" placeholder=" " autocomplete="given-name" oninput="checkName()" />
     </div>
     <button class="btn-primary" id="btnStart" disabled onclick="startAudit()">Commencer →</button>
@@ -252,13 +315,13 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 <div class="screen" id="screen-overview">
   <div class="prog-bar-wrap"><div class="prog-bar-fill" id="progFill" style="width:0%"></div></div>
   <div class="top-nav">
-    <div class="nav-brand">Audit des gammes</div>
+    <div class="nav-brand nav-brand-text">Audit des gammes</div>
     <div class="nav-meta" id="overviewMeta"></div>
   </div>
   <div class="content">
-    <div class="section-eyebrow">Vue d'ensemble</div>
-    <h2 class="section-title">Choisissez une gamme</h2>
-    <p class="section-hint">Évaluez d'abord la gamme, puis chacune de ses références.</p>
+    <div class="section-eyebrow" id="overviewEyebrow">Vue d'ensemble</div>
+    <h2 class="section-title" id="overviewTitle">Choisissez une gamme</h2>
+    <p class="section-hint" id="overviewHint">Évaluez d'abord la gamme, puis chacune de ses références.</p>
     <div class="gamme-list" id="gammeList"></div>
   </div>
 </div>
@@ -271,21 +334,21 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
   </div>
   <div class="content">
     <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
-      <span style="background:var(--ink);color:white;font-size:10px;font-weight:500;padding:0.2rem 0.55rem;border-radius:100px;letter-spacing:0.05em;">ÉTAPE 1 / 2</span>
-      <span class="section-eyebrow" style="margin:0;">Évaluation de la gamme</span>
+      <span style="background:var(--ink);color:white;font-size:10px;font-weight:500;padding:0.2rem 0.55rem;border-radius:100px;letter-spacing:0.05em;" id="step1Badge">ÉTAPE 1 / 2</span>
+      <span class="section-eyebrow" id="step1Eyebrow" style="margin:0;">Évaluation de la gamme</span>
     </div>
     <h2 class="section-title" id="gTitle"></h2>
-    <p class="section-hint">Notez ici la gamme dans son ensemble - positionnement, cohérence, compétitivité.<br>Vous noterez ensuite chaque référence séparément.</p>
+    <p class="section-hint" id="step1Hint">Notez ici la gamme dans son ensemble - positionnement, cohérence, compétitivité.<br>Vous noterez ensuite chaque référence séparément.</p>
     <div class="criteria-list" id="gCriteria"></div>
     <div style="margin-top:2rem">
-      <div class="comment-lbl">Commentaire général sur la gamme</div>
+      <div class="comment-lbl" id="gCommentLabel">Commentaire général sur la gamme</div>
       <div class="comment-block"><textarea id="gComment" placeholder="Points forts, points faibles, suggestions…"></textarea></div>
     </div>
     <div class="error-msg" id="gErrorMsg">Merci de noter tous les critères avant de continuer.</div>
   </div>
   <div class="bottom-nav">
-    <button class="btn-back" onclick="goOverview()">← Vue d'ensemble</button>
-    <button class="btn-next" onclick="validateGamme()">Étape 2 : les références →</button>
+    <button class="btn-back" id="btnBackOverviewG" onclick="goOverview()">← Vue d'ensemble</button>
+    <button class="btn-next" id="btnStep2" onclick="validateGamme()">Étape 2 : les références →</button>
   </div>
 </div>
 
@@ -299,24 +362,24 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
   <div class="content">
     <div id="lockNotice" style="display:none;align-items:center;gap:0.5rem;background:#F0F7F2;border:1px solid var(--success);border-radius:8px;padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:13px;color:var(--success);">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Cette référence a déjà été notée — les réponses sont verrouillées.
+      <span id="lockNoticeText">Cette référence a déjà été notée — les réponses sont verrouillées.</span>
     </div>
     <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
-      <span style="background:var(--gold);color:white;font-size:10px;font-weight:500;padding:0.2rem 0.55rem;border-radius:100px;letter-spacing:0.05em;">ÉTAPE 2 / 2</span>
+      <span style="background:var(--gold);color:white;font-size:10px;font-weight:500;padding:0.2rem 0.55rem;border-radius:100px;letter-spacing:0.05em;" id="step2Badge">ÉTAPE 2 / 2</span>
       <span class="section-eyebrow" style="margin:0;" id="rEyebrow"></span>
     </div>
     <h2 class="section-title" id="rTitle"></h2>
-    <p class="section-hint">Notez cette référence de 1 à 10.</p>
+    <p class="section-hint" id="step2Hint">Notez cette référence de 1 à 10.</p>
     <div class="criteria-list" id="rCriteria"></div>
     <div style="margin-top:2rem">
-      <div class="comment-lbl">Point fort ou frein principal</div>
+      <div class="comment-lbl" id="rCommentLabel">Point fort ou frein principal</div>
       <div class="comment-block"><textarea id="rComment" placeholder="Ce qui marche, ce qui bloque…"></textarea></div>
     </div>
     <div class="error-msg" id="rErrorMsg">Merci de noter tous les critères avant de continuer.</div>
   </div>
   <div class="bottom-nav">
-    <button class="btn-back" id="btnBack" onclick="prevRef()">←</button>
-    <button class="btn-back" onclick="goOverview()" style="white-space:nowrap;">Vue d'ensemble</button>
+    <button class="btn-back" id="btnBackRef" onclick="prevRef()">←</button>
+    <button class="btn-back" id="btnBackOverviewR" onclick="goOverview()" style="white-space:nowrap;">Vue d'ensemble</button>
     <button class="btn-next" id="btnNext" onclick="nextRef()">Référence suivante →</button>
   </div>
 </div>
@@ -325,13 +388,13 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 <div class="screen" id="screen-complete">
   <div class="complete-inner" style="margin:auto;">
     <div class="complete-emoji">🍷</div>
-    <h2 class="complete-title">Merci,<br><span id="completeName"></span> !</h2>
-    <p class="complete-sub">Votre audit est complet. Toutes vos évaluations ont été transmises avec succès.</p>
+    <h2 class="complete-title"><span id="completeTitleText">Merci,</span><br><span id="completeName"></span> !</h2>
+    <p class="complete-sub" id="completeSub">Votre audit est complet. Toutes vos évaluations ont été transmises avec succès.</p>
     <div class="stats-grid">
-      <div class="stat-box"><div class="stat-num">11</div><div class="stat-lbl">Gammes évaluées</div></div>
-      <div class="stat-box"><div class="stat-num">72</div><div class="stat-lbl">Références notées</div></div>
+      <div class="stat-box"><div class="stat-num">11</div><div class="stat-lbl" id="statGammesLabel">Gammes évaluées</div></div>
+      <div class="stat-box"><div class="stat-num">72</div><div class="stat-lbl" id="statRefsLabel">Références notées</div></div>
     </div>
-    <button class="btn-primary" onclick="restartAudit()">Nouvel audit</button>
+    <button class="btn-primary" id="btnNewAudit" onclick="restartAudit()">Nouvel audit</button>
   </div>
 </div>
 
@@ -350,20 +413,220 @@ const CATALOGUE = [
   { gamme: "Hacienda Araucano", refs: ["Alka","Gran Araucano","Clo Tinto","Clo Blanco","Humo Blanco Sauvignon Blanc","Humo Blanco Chardonnay","Humo Blanco Pinot Noir","Humo Blanco Cabernet Franc","Humo Blanco Cabernet Sauvignon","Humo Blanco Carmenere","L'Atelier Carmenere","L'Atelier Naranjo","L'Atelier Syrah-Viognier","Une Pinot Noir Rosé","Une Pet Nat"] },
 ];
 
-const GAMME_CRIT = [
-  { id:"positionnement", label:"Positionnement", desc:"La gamme est-elle clairement positionnée (entrée / milieu / haut de gamme) ?" },
-  { id:"identite", label:"Cohérence de gamme", desc:"Les étiquettes / packaging sont-ils cohérents entre eux ?" },
-  { id:"competitivite", label:"Compétitivité", desc:"Les prix sont-ils justifiés vis-à-vis de la concurrence ?" },
-  { id:"argumentaire", label:"Argumentaire", desc:"Disposez-vous d'éléments différenciants clairs à mettre en avant ?" },
-  { id:"storytelling", label:"Histoire & Storytelling", desc:"Y a-t-il un récit vendeur fort autour de cette gamme ?" },
-];
+const I18N = {
+  fr: {
+    // Welcome
+    intro: "Vous êtes au contact direct de nos clients : votre perception de nos gammes est une information stratégique. Cet audit nous permettra d'optimiser notre offre — positionnement, packaging, argumentaire — en nous appuyant sur votre expertise terrain.",
+    time_pill: "Environ 45 min · 11 gammes · 72 références",
+    name_label: "Votre prénom",
+    name_placeholder: "Ex : Sophie",
+    btn_start: "Commencer →",
+    welcome_title: "Audit des gammes",
+    resume_found: "Session en cours retrouvée",
+    resume_done: "gamme(s) complétée(s) sur",
+    btn_resume: "Reprendre",
+    btn_restart: "Recommencer",
+    // Overview
+    overview_eyebrow: "Vue d'ensemble",
+    overview_title: "Choisissez une gamme",
+    overview_hint: "Évaluez d'abord la gamme, puis chacune de ses références.",
+    nav_brand: "Audit des gammes",
+    sent: "Envoyée ✓",
+    remaining: "restante",
+    remainings: "restantes",
+    references: "référence",
+    referencess: "références",
+    // Gamme screen
+    step1: "ÉTAPE 1 / 2",
+    step1_eyebrow: "Évaluation de la gamme",
+    step1_hint: "Notez ici la gamme dans son ensemble - positionnement, cohérence, compétitivité.<br>Vous noterez ensuite chaque référence séparément.",
+    comment_gamme: "Commentaire général sur la gamme",
+    comment_gamme_ph: "Points forts, points faibles, suggestions…",
+    error_criteria: "Merci de noter tous les critères avant de continuer.",
+    btn_back_overview: "← Vue d'ensemble",
+    btn_step2: "Étape 2 : les références →",
+    // Ref screen
+    step2: "ÉTAPE 2 / 2",
+    step2_hint: "Notez cette référence de 1 à 10.",
+    comment_ref: "Point fort ou frein principal",
+    comment_ref_ph: "Ce qui marche, ce qui bloque…",
+    lock_notice: "Cette référence a déjà été notée — les réponses sont verrouillées.",
+    btn_next_ref: "Référence suivante →",
+    btn_validate: "Valider la gamme ✓",
+    scale_low: "Insuffisant",
+    scale_high: "Excellent",
+    // Toast & syncing
+    toast_success: "envoyée avec succès ✓",
+    syncing: "Envoi en cours…",
+    // Complete
+    complete_title: "Merci,",
+    complete_sub: "Votre audit est complet. Toutes vos évaluations ont été transmises avec succès.",
+    stat_gammes: "Gammes évaluées",
+    stat_refs: "Références notées",
+    btn_new_audit: "Nouvel audit",
+    // Gamme criteria
+    gamme_crit: [
+      { id:"positionnement", label:"Positionnement", desc:"La gamme est-elle clairement positionnée (entrée / milieu / haut de gamme) ?" },
+      { id:"identite", label:"Cohérence de gamme", desc:"Les étiquettes / packaging sont-ils cohérents entre eux ?" },
+      { id:"competitivite", label:"Compétitivité", desc:"Les prix sont-ils justifiés vis-à-vis de la concurrence ?" },
+      { id:"argumentaire", label:"Argumentaire", desc:"Disposez-vous d'éléments différenciants clairs à mettre en avant ?" },
+      { id:"storytelling", label:"Histoire & Storytelling", desc:"Y a-t-il un récit vendeur fort autour de cette gamme ?" },
+    ],
+    // Ref criteria
+    ref_crit: [
+      { id:"qualite_prix", label:"Rapport qualité/prix", desc:"Le prix est-il justifié aux yeux du client ?" },
+      { id:"etiquette", label:"Attractivité graphique", desc:"L'étiquette plaît-elle aux clients ?" },
+      { id:"facilite_vente", label:"Facilité à vendre", desc:"Ce vin est-il simple à proposer et à défendre ?" },
+      { id:"retours", label:"Retours clients", desc:"Les clients sont-ils satisfaits du produit ?" },
+    ],
+  },
+  en: {
+    // Welcome
+    intro: "You are in direct contact with our clients: your perception of our ranges is strategic information. This audit will help us optimise our offering — positioning, packaging, sales pitch — drawing on your field expertise.",
+    time_pill: "Approx. 45 min · 11 ranges · 72 references",
+    name_label: "Your first name",
+    name_placeholder: "E.g. Sophie",
+    btn_start: "Start →",
+    welcome_title: "Range Audit",
+    resume_found: "Existing session found",
+    resume_done: "range(s) completed out of",
+    btn_resume: "Resume",
+    btn_restart: "Start over",
+    // Overview
+    overview_eyebrow: "Overview",
+    overview_title: "Choose a range",
+    overview_hint: "First rate the range as a whole, then each of its references.",
+    nav_brand: "Range Audit",
+    sent: "Submitted ✓",
+    remaining: "remaining",
+    remainings: "remaining",
+    references: "reference",
+    referencess: "references",
+    // Gamme screen
+    step1: "STEP 1 / 2",
+    step1_eyebrow: "Range evaluation",
+    step1_hint: "Rate this range as a whole — positioning, consistency, competitiveness.<br>You will then rate each reference separately.",
+    comment_gamme: "General comment on the range",
+    comment_gamme_ph: "Strengths, weaknesses, suggestions…",
+    error_criteria: "Please rate all criteria before proceeding.",
+    btn_back_overview: "← Overview",
+    btn_step2: "Step 2: the references →",
+    // Ref screen
+    step2: "STEP 2 / 2",
+    step2_hint: "Rate this reference from 1 to 10.",
+    comment_ref: "Key strength or main obstacle",
+    comment_ref_ph: "What works, what doesn't…",
+    lock_notice: "This reference has already been rated — answers are locked.",
+    btn_next_ref: "Next reference →",
+    btn_validate: "Submit range ✓",
+    scale_low: "Poor",
+    scale_high: "Excellent",
+    // Toast & syncing
+    toast_success: "successfully submitted ✓",
+    syncing: "Submitting…",
+    // Complete
+    complete_title: "Thank you,",
+    complete_sub: "Your audit is complete. All your evaluations have been successfully submitted.",
+    stat_gammes: "Ranges assessed",
+    stat_refs: "References rated",
+    btn_new_audit: "New audit",
+    // Gamme criteria
+    gamme_crit: [
+      { id:"positionnement", label:"Positioning", desc:"Is the range clearly positioned (entry / mid / premium level)?" },
+      { id:"identite", label:"Range consistency", desc:"Are the labels and packaging consistent with each other?" },
+      { id:"competitivite", label:"Competitiveness", desc:"Are the prices justified compared to the competition?" },
+      { id:"argumentaire", label:"Sales pitch", desc:"Do you have clear differentiating elements to highlight?" },
+      { id:"storytelling", label:"Story & storytelling", desc:"Is there a compelling brand story behind this range?" },
+    ],
+    // Ref criteria
+    ref_crit: [
+      { id:"qualite_prix", label:"Quality/price ratio", desc:"Is the price justified in the client's eyes?" },
+      { id:"etiquette", label:"Label attractiveness", desc:"Do clients find the label appealing?" },
+      { id:"facilite_vente", label:"Ease of selling", desc:"Is this wine easy to propose and defend?" },
+      { id:"retours", label:"Client feedback", desc:"Do clients speak positively about it? Reorders?" },
+    ],
+  }
+};
 
-const REF_CRIT = [
-  { id:"qualite_prix", label:"Rapport qualité/prix", desc:"Le prix est-il justifié aux yeux du client ?" },
-  { id:"etiquette", label:"Attractivité graphique", desc:"L'étiquette plaît-elle aux clients ?" },
-  { id:"facilite_vente", label:"Facilité à vendre", desc:"Ce vin est-il simple à proposer et à défendre ?" },
-  { id:"retours", label:"Retours clients", desc:"Les clients sont-ils satisfaits du produit ?" },
-];
+let LANG = 'fr';
+function T(key) { return I18N[LANG][key]; }
+function GAMME_CRIT() { return I18N[LANG].gamme_crit; }
+function REF_CRIT() { return I18N[LANG].ref_crit; }
+
+function toggleLang() {
+  LANG = LANG === 'fr' ? 'en' : 'fr';
+  localStorage.setItem('lurton_lang', LANG);
+  applyLang();
+  // Re-render current screen content if needed
+  const active = document.querySelector('.screen.active');
+  if (active) {
+    const id = active.id;
+    if (id === 'screen-overview') renderOverview();
+    else if (id === 'screen-gamme') renderGammeCrit(S.gi);
+    else if (id === 'screen-ref') renderRef();
+  }
+}
+
+function updateLangToggle() {
+  const isEn = LANG === 'en';
+  document.getElementById('langToggleFlag').textContent = isEn ? '🇫🇷' : '🇬🇧';
+  document.getElementById('langToggleLabel').textContent = isEn ? 'FR' : 'EN';
+}
+
+
+function setLang(lang) {
+  LANG = lang;
+  S.lang = lang;
+  localStorage.setItem('lurton_lang', lang);
+  applyLang();
+  show('screen-welcome');
+  checkResume();
+}
+
+function applyLang() {
+  const t = I18N[LANG];
+  // Welcome
+  document.getElementById('welcomeTitle').textContent = t.welcome_title;
+  document.getElementById('welcomeIntro').textContent = t.intro;
+  document.getElementById('timePillText').textContent = t.time_pill;
+  document.getElementById('nameLabel').textContent = t.name_label;
+  document.getElementById('userName').placeholder = t.name_placeholder;
+  document.getElementById('btnStart').textContent = t.btn_start;
+  document.getElementById('resumeFoundText').textContent = t.resume_found;
+  document.getElementById('btnResume').textContent = t.btn_resume;
+  document.getElementById('btnRestart').textContent = t.btn_restart;
+  // Overview
+  document.getElementById('overviewEyebrow').textContent = t.overview_eyebrow;
+  document.getElementById('overviewTitle').textContent = t.overview_title;
+  document.getElementById('overviewHint').textContent = t.overview_hint;
+  document.querySelectorAll('.nav-brand-text').forEach(el => el.textContent = t.nav_brand);
+  // Gamme screen
+  document.getElementById('step1Badge').textContent = t.step1;
+  document.getElementById('step1Eyebrow').textContent = t.step1_eyebrow;
+  document.getElementById('step1Hint').innerHTML = t.step1_hint;
+  document.getElementById('gCommentLabel').textContent = t.comment_gamme;
+  document.getElementById('gComment').placeholder = t.comment_gamme_ph;
+  document.getElementById('gErrorMsg').textContent = t.error_criteria;
+  document.getElementById('btnBackOverviewG').textContent = t.btn_back_overview;
+  document.getElementById('btnStep2').textContent = t.btn_step2;
+  // Ref screen
+  document.getElementById('step2Badge').textContent = t.step2;
+  document.getElementById('step2Hint').textContent = t.step2_hint;
+  document.getElementById('rCommentLabel').textContent = t.comment_ref;
+  document.getElementById('rComment').placeholder = t.comment_ref_ph;
+  document.getElementById('lockNoticeText').textContent = t.lock_notice;
+  document.getElementById('rErrorMsg').textContent = t.error_criteria;
+  document.getElementById('btnBackRef').textContent = '←';
+  // Complete
+  document.getElementById('completeTitleText').textContent = t.complete_title;
+  document.getElementById('completeSub').textContent = t.complete_sub;
+  document.getElementById('statGammesLabel').textContent = t.stat_gammes;
+  document.getElementById('statRefsLabel').textContent = t.stat_refs;
+  document.getElementById('btnNewAudit').textContent = t.btn_new_audit;
+  // Syncing
+  document.getElementById('syncingLabel').textContent = t.syncing;
+  updateLangToggle();
+}
 
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw8OYV8-woOqAcdwu35hlY8rxoj9HFtg8cbZgAPrAlN8HF7HXUSFOuPCKBO2IuFYURV/exec';
 let S = { userName:'', sheetUrl: SHEET_URL, gi:0, ri:0, gScores:{}, rScores:{}, done:{} };
@@ -379,8 +642,15 @@ function show(id) {
 }
 
 window.onload = function() {
-  show('screen-welcome');
-  checkResume();
+  const savedLang = localStorage.getItem('lurton_lang');
+  if (savedLang) {
+    LANG = savedLang;
+    applyLang();
+    show('screen-welcome');
+    checkResume();
+  } else {
+    show('screen-lang');
+  }
 };
 
 function saveConfig() {
@@ -395,7 +665,7 @@ function checkResume() {
   const d = load();
   if (d && d.userName && Object.keys(d.done||{}).length > 0) {
     const cnt = Object.keys(d.done).length;
-    document.getElementById('resumeText').textContent = ` ${cnt} gamme(s) complétée(s) sur ${CATALOGUE.length}.`;
+    document.getElementById('resumeText').textContent = ` ${cnt} ${T('resume_done')} ${CATALOGUE.length}.`;
     document.getElementById('resumeBanner').style.display = 'block';
     document.getElementById('userName').value = d.userName;
     checkName();
@@ -450,9 +720,9 @@ function renderOverview() {
 
     // Sub-label: done state, in-progress with remaining, or ref count
     let subLabel = '';
-    if (isDone) subLabel = 'Envoyée ✓';
-    else if (inProg) subLabel = `${remaining} référence${remaining>1?'s':''} restante${remaining>1?'s':''}`;
-    else subLabel = `${g.refs.length} référence${g.refs.length>1?'s':''}`;
+    if (isDone) subLabel = T('sent');
+    else if (inProg) subLabel = `${remaining} ${remaining>1?T('remainings'):T('remaining')}`;
+    else subLabel = `${g.refs.length} ${g.refs.length>1?T('referencess'):T('references')}`;
 
     card.innerHTML = `<div class="gamme-info"><div class="gamme-name">${g.gamme}</div><div class="gamme-count">${subLabel}</div></div>${icon}`;
     list.appendChild(card);
@@ -460,7 +730,7 @@ function renderOverview() {
 
   const pct = Math.round(doneRefs/TOTAL_REFS*100);
   document.getElementById('progFill').style.width = pct+'%';
-  document.getElementById('overviewMeta').textContent = `${doneRefs}/${TOTAL_REFS} références`;
+  document.getElementById('overviewMeta').textContent = `${doneRefs}/${TOTAL_REFS} ${T('referencess')}`;
 
   if (Object.keys(S.done).length === CATALOGUE.length) setTimeout(showComplete, 400);
 }
@@ -478,7 +748,7 @@ function openGamme(gi) {
 
 function renderGammeCrit(gi) {
   const saved = S.gScores[gi] || {};
-  document.getElementById('gCriteria').innerHTML = GAMME_CRIT.map(c => buildCrit(c, saved[c.id], `setGScore(${gi},'${c.id}',`)).join('');
+  document.getElementById('gCriteria').innerHTML = GAMME_CRIT().map(c => buildCrit(c, saved[c.id], `setGScore(${gi},'${c.id}',`)).join('');
   document.getElementById('gComment').value = saved.comment || '';
 }
 
@@ -489,7 +759,7 @@ function buildCrit(c, val, onclickPrefix, locked) {
     const style = locked ? ' style="cursor:default;opacity:0.75;"' : '';
     return `<button class="score-btn${cls}"${click}${style}>${n}</button>`;
   }).join('');
-  return `<div class="criterion"><div class="crit-label">${c.label}</div><div class="crit-desc">${c.desc}</div><div class="score-row">${btns}</div><div class="score-scale"><span>Insuffisant</span><span>Excellent</span></div></div>`;
+  return `<div class="criterion"><div class="crit-label">${c.label}</div><div class="crit-desc">${c.desc}</div><div class="score-row">${btns}</div><div class="score-scale"><span>${T('scale_low')}</span><span>${T('scale_high')}</span></div></div>`;
 }
 
 function setGScore(gi, cid, score, btn) {
@@ -500,21 +770,19 @@ function setGScore(gi, cid, score, btn) {
     b.className = 'score-btn';
     if (i+1===score) b.classList.add(score>=8?'active-high':score>=5?'active-mid':'active-low');
   });
-  // clear error state for this criterion
   btn.closest('.criterion').classList.remove('has-error');
-  const allFilled = GAMME_CRIT.every(c => S.gScores[gi] && S.gScores[gi][c.id]);
+  const allFilled = GAMME_CRIT().every(c => S.gScores[gi] && S.gScores[gi][c.id]);
   if (allFilled) document.getElementById('gErrorMsg').classList.remove('show');
 }
 
 function validateGamme() {
   const gi = S.gi;
   const scores = S.gScores[gi] || {};
-  const missing = GAMME_CRIT.filter(c => !scores[c.id]);
+  const missing = GAMME_CRIT().filter(c => !scores[c.id]);
   if (missing.length > 0) {
     document.getElementById('gErrorMsg').classList.add('show');
-    // highlight missing criteria
     document.querySelectorAll('#gCriteria .criterion').forEach((el, i) => {
-      el.classList.toggle('has-error', !scores[GAMME_CRIT[i].id]);
+      el.classList.toggle('has-error', !scores[GAMME_CRIT()[i].id]);
     });
     document.getElementById('gErrorMsg').scrollIntoView({behavior:'smooth', block:'nearest'});
     return;
@@ -540,49 +808,41 @@ function renderRef() {
   const saved = (S.rScores[gi]||{})[ri] || {};
   const isLast = ri === g.refs.length - 1;
 
-  // Count remaining (refs with no scores yet)
   const totalDone = g.refs.filter((_,i) => {
     const sc = (S.rScores[gi]||{})[i]||{};
-    return REF_CRIT.every(c => sc[c.id]);
+    return REF_CRIT().every(c => sc[c.id]);
   }).length;
   const remaining = g.refs.length - totalDone;
 
   document.getElementById('rNavBrand').textContent = g.gamme;
-  document.getElementById('rNavMeta').textContent = `${remaining} restante${remaining>1?'s':''}`;
+  document.getElementById('rNavMeta').textContent = `${remaining} ${remaining>1?T('remainings'):T('remaining')}`;
   document.getElementById('rEyebrow').textContent = g.gamme;
   document.getElementById('rTitle').textContent = ref;
-  document.getElementById('btnBack').textContent = ri===0 ? '← Gamme' : '←';
-  document.getElementById('btnNext').textContent = isLast ? 'Valider la gamme ✓' : 'Référence suivante →';
+  document.getElementById('btnBackRef').textContent = ri===0 ? `← ${T('step1_eyebrow')}` : '←';
+  document.getElementById('btnNext').textContent = isLast ? T('btn_validate') : T('btn_next_ref');
   document.getElementById('rComment').value = saved.comment || '';
 
-  // Check if this ref is already fully scored (locked)
-  const isLocked = REF_CRIT.every(c => saved[c.id]);
+  const isLocked = REF_CRIT().every(c => saved[c.id]);
 
-  // Dots
   const dots = document.getElementById('dotsNav');
   dots.innerHTML = '';
   g.refs.forEach((_,i) => {
     const sc = (S.rScores[gi]||{})[i]||{};
-    const isDone = REF_CRIT.every(c => sc[c.id]);
+    const isDone = REF_CRIT().every(c => sc[c.id]);
     const d = document.createElement('div');
     d.className = 'dot' + (i===ri?' current':isDone?' done':'');
     d.onclick = () => { saveRef(); S.ri=i; renderRef(); window.scrollTo(0,0); };
     dots.appendChild(d);
   });
 
-  document.getElementById('rCriteria').innerHTML = REF_CRIT.map(c => buildCrit(c, saved[c.id], `setRScore(${gi},${ri},'${c.id}',`, isLocked)).join('');
+  document.getElementById('rCriteria').innerHTML = REF_CRIT().map(c => buildCrit(c, saved[c.id], `setRScore(${gi},${ri},'${c.id}',`, isLocked)).join('');
   document.getElementById('rComment').disabled = isLocked;
   document.getElementById('rComment').style.opacity = isLocked ? '0.6' : '1';
   document.getElementById('btnNext').disabled = false;
   document.getElementById('rErrorMsg').classList.remove('show');
 
-  // Show lock notice if already scored
   const lockNotice = document.getElementById('lockNotice');
-  if (isLocked) {
-    lockNotice.style.display = 'flex';
-  } else {
-    lockNotice.style.display = 'none';
-  }
+  lockNotice.style.display = isLocked ? 'flex' : 'none';
 }
 
 function setRScore(gi, ri, cid, score, btn) {
@@ -594,9 +854,8 @@ function setRScore(gi, ri, cid, score, btn) {
     b.className = 'score-btn';
     if (i+1===score) b.classList.add(score>=8?'active-high':score>=5?'active-mid':'active-low');
   });
-  // clear error state for this criterion
   btn.closest('.criterion').classList.remove('has-error');
-  const allFilled = REF_CRIT.every(c => S.rScores[gi] && S.rScores[gi][ri] && S.rScores[gi][ri][c.id]);
+  const allFilled = REF_CRIT().every(c => S.rScores[gi] && S.rScores[gi][ri] && S.rScores[gi][ri][c.id]);
   if (allFilled) document.getElementById('rErrorMsg').classList.remove('show');
 }
 
@@ -618,7 +877,7 @@ function nextRef() {
   saveRef();
   const gi = S.gi, ri = S.ri;
   const scores = (S.rScores[gi]||{})[ri] || {};
-  const missing = REF_CRIT.filter(c => !scores[c.id]);
+  const missing = REF_CRIT().filter(c => !scores[c.id]);
   if (missing.length > 0) {
     document.getElementById('rErrorMsg').classList.add('show');
     document.querySelectorAll('#rCriteria .criterion').forEach((el, i) => {
@@ -651,8 +910,7 @@ async function submitGamme(gi) {
     } catch(e) { console.warn(e); }
     document.getElementById('syncing').classList.remove('show');
   }
-  // Show success toast then go to overview
-  showToast(`« ${g.gamme} » envoyé avec succès ✓`);
+  showToast(`« ${g.gamme} » ${T('toast_success')}`);
   setTimeout(() => { show('screen-overview'); renderOverview(); }, 2200);
 }
 
@@ -671,8 +929,9 @@ function showComplete() {
 
 function restartAudit() {
   localStorage.removeItem('lurton_v2');
+  localStorage.removeItem('lurton_lang');
   S = { userName:'', sheetUrl: SHEET_URL, gi:0, ri:0, gScores:{}, rScores:{}, done:{} };
-  show('screen-welcome');
+  show('screen-lang');
   document.getElementById('resumeBanner').style.display='none';
   document.getElementById('userName').value='';
   document.getElementById('btnStart').disabled=true;
