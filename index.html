@@ -143,6 +143,12 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 .config-hint { font-size: 11px; color: var(--ink-muted); margin-top: 0.35rem; }
 .skip-link { display: block; text-align: center; margin-top: 1rem; font-size: 13px; color: var(--ink-muted); cursor: pointer; text-decoration: underline; background: none; border: none; font-family: 'Inter', sans-serif; width: 100%; }
 
+/* ERROR MESSAGE */
+.error-msg { display:none; color:#B33; font-size:13px; margin-top:0.75rem; padding:0.65rem 1rem; background:#FEF0F0; border:1px solid #F5C0C0; border-radius:6px; }
+.error-msg.show { display:block; }
+.criterion.has-error .crit-label::after { content:" *"; color:#B33; }
+.criterion.has-error .score-row .score-btn { border-color:#F5C0C0; }
+
 @media (max-width: 380px) {
   .score-btn { width: 28px; height: 28px; font-size: 11px; }
   .score-row { gap: 0.25rem; }
@@ -151,42 +157,43 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 </head>
 <body>
 
-<div class="flash" id="flash">
-  <div class="flash-ring">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-  </div>
-</div>
-
 <div class="syncing" id="syncing">
   <div class="spinner"></div>
   <div class="syncing-label">Envoi en cours…</div>
 </div>
 
-<!-- CONFIG -->
-<div class="screen active" id="screen-config">
-  <div class="config-inner">
-    <div class="eyebrow">Premier démarrage</div>
-    <div class="config-title">Configuration</div>
-    <div class="config-desc">Renseignez l'URL de votre Google Sheet pour centraliser les réponses. Cette étape n'est faite qu'une seule fois.</div>
-    <div class="field-wrap">
-      <label class="field-label">URL Google Apps Script</label>
-      <input class="field-input" type="url" id="sheetUrl" placeholder="https://script.google.com/macros/s/…" />
-      <div class="config-hint">L'URL est fournie après déploiement de votre script Apps Script.</div>
-    </div>
-    <button class="btn-primary" onclick="saveConfig()">Enregistrer et continuer</button>
-    <button class="skip-link" onclick="skipConfig()">Continuer sans Google Sheets (mode test)</button>
-  </div>
-</div>
-
 <!-- WELCOME -->
-<div class="screen" id="screen-welcome">
+<div class="screen active" id="screen-welcome">
   <div class="welcome-inner" style="margin:auto; padding:2rem;">
-    <svg class="logo-mark" width="40" height="56" viewBox="0 0 40 56" fill="none">
-      <path d="M20 2C20 2 8 16 8 30C8 38.837 13.373 46 20 46C26.627 46 32 38.837 32 30C32 16 20 2 20 2Z" stroke="#B8995A" stroke-width="1.5" fill="none"/>
-      <line x1="20" y1="46" x2="20" y2="53" stroke="#B8995A" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="14" y1="53" x2="26" y2="53" stroke="#B8995A" stroke-width="1.5" stroke-linecap="round"/>
+    <svg class="logo-mark" viewBox="0 0 237.54 93.74" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:180px;height:auto;margin:0 auto 2rem;display:block;">
+      <path fill="#B8995A" d="M124.33,0s-.08.02-.11.06l.04.23c.14.15.42.45.52.61.43.67.3,1.06-.23,1.67-.5.57-.97,1.03-3.57,3.63l-2.94,2.94c-1.6,1.6-2.91,2.92-3.7,3.53-.4.31-.75.54-1.06.54-.12,0-.22-.03-.33-.1-.19-.11-.41-.28-.56-.43v-3.92c0-3.68,0-4.33.04-5.08.04-.84.23-1.24.92-1.35.28-.05.61-.07.78-.07.1,0,.19-.04.19-.14,0-.14-.12-.19-.37-.19-.71,0-2.43.07-2.55.07s-1.6-.07-2.66-.07c-.27,0-.38.05-.38.19,0,.1.1.14.2.14.21,0,.61.03.8.07.78.17.97.54,1.01,1.35.05.75.05,1.41.05,5.08v4.16c0,2.26,0,4.12-.12,5.11-.09.68-.21,1.2-.68,1.3-.2.05-.48.09-.69.09l-2.77-2.77c-2.61-2.6-3.07-3.07-3.57-3.63-.55-.62-.7-1.04-.3-1.61.17-.23.38-.48.5-.59l.04-.24s-.07-.05-.11-.05c-.08,0-.17.06-.29.18-.5.51-1.67,1.77-1.75,1.85-.09.08-1.18,1.08-1.93,1.83-.19.19-.23.3-.13.4l.23-.03c.15-.15.45-.42.61-.52.27-.17.5-.26.72-.26.31,0,.6.17.95.5.57.5,1.04.97,3.64,3.57l2.93,2.93c1.61,1.6,2.92,2.92,3.54,3.7.41.55.69,1,.43,1.4-.11.18-.28.41-.43.56h-3.92c-3.68,0-4.34,0-5.1-.05-.83-.04-1.22-.23-1.35-.92-.05-.28-.07-.61-.07-.77,0-.1-.04-.19-.14-.19-.13,0-.19.12-.19.37,0,.71.07,2.43.07,2.55s-.07,1.61-.07,2.66c0,.26.05.38.19.38.11,0,.14-.1.14-.19,0-.21.03-.61.07-.8.17-.77.54-.97,1.35-1.01.76-.05,1.41-.05,5.1-.05h4.15c2.26,0,4.12,0,5.11.11.69.1,1.21.22,1.3.68.05.21.1.49.1.7l-2.78,2.77c-2.6,2.6-3.06,3.06-3.63,3.57-.38.34-.68.53-.99.53-.19,0-.39-.07-.61-.23-.23-.16-.49-.38-.6-.5l-.23-.04c-.11.11-.05.22.13.4.5.51,1.77,1.67,1.86,1.76.08.08,1.08,1.18,1.83,1.94.12.11.21.18.29.18.04,0,.08-.02.11-.06l-.04-.23c-.14-.14-.41-.44-.51-.61-.44-.66-.3-1.07.23-1.67.51-.57.97-1.03,3.57-3.63l2.94-2.94c1.6-1.6,2.91-2.92,3.7-3.53.4-.3.75-.54,1.06-.54.11,0,.23.03.33.1.19.11.41.27.56.43v3.92c0,3.68,0,4.34-.04,5.1-.05.83-.24,1.22-.92,1.34-.29.05-.61.08-.77.08-.1,0-.2.04-.2.13,0,.14.12.2.38.2.7,0,2.42-.07,2.55-.07.12,0,1.6.07,2.66.07.26,0,.37-.05.37-.2,0-.09-.09-.13-.19-.13-.21,0-.61-.03-.8-.08-.78-.16-.97-.54-1.01-1.34-.05-.75-.05-1.41-.05-5.1v-4.15c0-2.26,0-4.13.12-5.11.1-.68.21-1.21.68-1.3.22-.04.49-.1.69-.1l2.78,2.78c2.6,2.6,3.07,3.07,3.57,3.63.55.62.7,1.04.3,1.6-.17.24-.38.49-.5.6l-.04.23s.07.05.11.05c.07,0,.17-.07.29-.19.5-.5,1.67-1.77,1.75-1.85.09-.09,1.18-1.08,1.94-1.84.19-.19.23-.3.13-.4l-.23.04c-.15.15-.45.42-.62.51-.27.18-.5.26-.71.26-.31,0-.6-.17-.96-.49-.56-.5-1.03-.97-3.63-3.57l-2.94-2.94c-1.6-1.59-2.91-2.91-3.53-3.69-.42-.55-.69-1-.43-1.4.11-.19.27-.41.42-.56h3.92c3.68,0,4.34,0,5.1.04.83.05,1.22.24,1.34.92.04.29.07.61.07.78,0,.09.05.19.14.19.14,0,.19-.11.19-.37,0-.71-.07-2.43-.07-2.56,0-.12.07-1.6.07-2.66,0-.26-.04-.37-.19-.37-.1,0-.14.09-.14.19,0,.21-.03.61-.07.8-.16.78-.54.97-1.34,1.02-.75.04-1.42.04-5.1.04h-4.15c-2.26,0-4.13,0-5.12-.12-.68-.1-1.2-.21-1.3-.69-.04-.2-.09-.48-.09-.68l2.77-2.78c2.6-2.6,3.07-3.06,3.64-3.57.37-.34.68-.52.99-.52.19,0,.39.08.61.23.23.16.48.38.6.5l.23.04c.1-.11.05-.22-.13-.4-.51-.51-1.77-1.67-1.86-1.76-.08-.08-1.07-1.18-1.83-1.93-.12-.12-.22-.19-.29-.19M118.63,18.11c-.35-.27-.69-.6-1.06-.98-1.31-1.3-1.62-1.85-1.62-2.38,0-.59.96-1.69,3.31-4.05,0,.74.07,1.95.07,2.15,0,.97-.07,2.03-.11,3.76l-.04.15c-.06.43-.28.96-.56,1.34M115.73,18.89c-1.84,0-2.46-.16-2.83-.54-.42-.42-.51-1.88-.51-5.2.52.51,1.43,1.33,1.57,1.47.68.68,1.38,1.48,2.57,2.73l.09.13c.25.35.48.89.55,1.35-.43.05-.91.06-1.44.06M120.18,18.64c-.05-.43-.06-.92-.06-1.44,0-1.84.17-2.45.54-2.82.42-.43,1.88-.52,5.21-.52-.52.53-1.34,1.43-1.48,1.57-.67.68-1.48,1.38-2.73,2.58l-.12.08c-.35.26-.89.48-1.35.55M126.15,20.81c-.97,0-2.03-.07-3.76-.11l-.15-.03c-.42-.07-.96-.28-1.33-.56.26-.35.59-.7.97-1.07,1.31-1.3,1.85-1.62,2.39-1.62.59,0,1.69.96,4.04,3.31-.74,0-1.95.07-2.15.07M113.28,23.06c-.59,0-1.7-.97-4.05-3.31.75,0,1.96-.07,2.16-.07.97,0,2.03.07,3.76.1l.15.04c.42.07.96.28,1.33.56-.27.35-.6.69-.97,1.07-1.3,1.3-1.85,1.62-2.39,1.62M118.67,20.78c-.14-.12-.26-.19-.35-.22-.02-.19-.05-.32-.1-.42.12-.14.19-.25.23-.36.18-.02.31-.04.41-.1.14.12.26.19.35.23.02.19.05.32.1.42-.12.13-.19.25-.23.35-.19.02-.31.05-.41.1M125.16,27.34c-.52-.52-1.43-1.33-1.57-1.47-.69-.68-1.39-1.48-2.58-2.73l-.09-.13c-.25-.35-.48-.88-.55-1.34.43-.06.91-.07,1.44-.07,1.84,0,2.45.17,2.83.54.41.42.51,1.88.51,5.21M111.67,26.63c.52-.53,1.33-1.44,1.47-1.58.68-.68,1.48-1.38,2.73-2.57l.14-.09c.34-.25.87-.48,1.34-.54.05.43.06.91.06,1.43,0,1.85-.17,2.45-.54,2.83-.43.42-1.88.52-5.21.52M118.27,29.78c0-.74-.07-1.95-.07-2.16,0-.97.07-2.02.12-3.76l.04-.15c.06-.42.27-.96.56-1.33.34.27.69.6,1.06.97,1.31,1.3,1.62,1.86,1.62,2.39,0,.59-.97,1.7-3.32,4.05"/>
+      <g>
+        <path fill="#B8995A" d="M73.5,62.85v-.48c.89,0,1.46-.16,1.7-.47.24-.31.36-1.05.36-2.21v-7.45c0-1.14-.12-1.88-.36-2.2-.24-.32-.8-.48-1.7-.48v-.48h5.83c2.37,0,4.19.67,5.44,2,1.14,1.22,1.72,2.84,1.72,4.87s-.57,3.64-1.7,4.85c-1.25,1.35-3.07,2.02-5.46,2.02h-5.83ZM77.26,49.94v9.39c0,1.16.12,1.89.35,2.2.23.31.78.47,1.66.47h.09c1.9,0,3.27-.67,4.12-2,.64-1.01.97-2.35.97-4.03s-.32-2.99-.97-4.01c-.86-1.35-2.23-2.02-4.12-2.02h-2.09Z"/>
+        <path fill="#B8995A" d="M100.71,58.02c0,1.4-.49,2.6-1.47,3.59s-2.16,1.49-3.54,1.49-2.56-.5-3.54-1.49c-.98-.99-1.47-2.19-1.47-3.59s.49-2.6,1.47-3.59c.98-.99,2.16-1.49,3.54-1.49s2.56.5,3.54,1.49,1.47,2.19,1.47,3.59ZM95.7,53.57c-1.19,0-2.1.49-2.76,1.47-.55.83-.83,1.82-.83,2.98s.27,2.15.81,2.97c.65.99,1.57,1.48,2.77,1.48s2.1-.49,2.76-1.47c.55-.83.83-1.82.83-2.98s-.27-2.15-.81-2.97c-.65-.99-1.57-1.48-2.77-1.48Z"/>
+        <path fill="#B8995A" d="M105.46,54.92v5.72c0,.8.08,1.31.25,1.54.17.22.56.33,1.19.33v.33h-3.43v-.33c.63,0,1.02-.11,1.19-.33s.25-.73.25-1.54v-5.21c0-.8-.08-1.31-.25-1.54-.17-.22-.56-.33-1.19-.33v-.33h2.57l3.18,7.81,3.17-7.81h2.35v.33c-.63,0-1.02.11-1.19.33-.17.22-.25.73-.25,1.54v5.21c0,.8.08,1.31.25,1.54.17.22.56.33,1.19.33v.33h-4.06v-.33c.63,0,1.02-.11,1.19-.33s.25-.73.25-1.55v-5.25l-3.13,7.72h-.2s-3.33-8.18-3.33-8.18Z"/>
+        <path fill="#B8995A" d="M118.92,59.52l-.72,1.78c-.09.24-.14.43-.14.57,0,.43.44.64,1.32.64v.33h-3.51v-.33c.69,0,1.14-.15,1.35-.45.08-.12.23-.43.44-.95l3.31-8.17h.2l3.32,8.17c.25.61.45.99.6,1.12.21.19.61.28,1.19.28v.33h-4.17v-.33c.88,0,1.33-.21,1.33-.63,0-.16-.05-.36-.15-.59l-.72-1.78h-3.64ZM122.32,58.93l-1.59-3.88-1.57,3.88h3.16Z"/>
+        <path fill="#B8995A" d="M131.46,62.85h-4.07v-.33c.63,0,1.02-.11,1.19-.33s.25-.73.25-1.54v-5.21c0-.8-.08-1.31-.25-1.54-.17-.22-.56-.33-1.19-.33v-.33h4.07v.33c-.63,0-1.02.11-1.19.33-.17.22-.25.73-.25,1.54v5.21c0,.8.08,1.31.25,1.54.17.22.56.33,1.19.33v.33Z"/>
+        <path fill="#B8995A" d="M141.62,60.84v-5.42c0-.8-.08-1.31-.25-1.53s-.56-.33-1.19-.33v-.33h3.43v.33c-.63,0-1.02.11-1.19.33-.17.22-.25.73-.25,1.54v7.67h-.35l-6.11-8.05v5.59c0,.8.08,1.31.25,1.54.17.22.56.33,1.19.33v.33h-3.43v-.33c.63,0,1.02-.11,1.19-.33s.25-.73.25-1.54v-5.21c0-.8-.08-1.31-.25-1.54-.17-.22-.56-.33-1.19-.33v-.33h2.13s5.77,7.62,5.77,7.62Z"/>
+        <path fill="#B8995A" d="M145.74,62.85v-.33c.63,0,1.02-.11,1.19-.33s.25-.73.25-1.54v-5.21c0-.8-.08-1.31-.25-1.54-.17-.22-.56-.33-1.19-.33v-.33h6.86l.13,2.12h-.31l-.07-.32c-.11-.47-.25-.78-.43-.92-.23-.2-.67-.29-1.31-.29h-2.23v3.65h.75c.75,0,1.23-.09,1.44-.27s.31-.6.31-1.27h.31v3.66h-.31c0-.67-.1-1.09-.31-1.27-.2-.18-.69-.27-1.45-.27h-.75v2.34c0,.8.08,1.31.25,1.54.17.22.56.33,1.19.33h1.29c.65,0,1.09-.09,1.31-.28.17-.14.31-.45.43-.94l.07-.32h.31l-.13,2.13h-7.36Z"/>
+        <path fill="#B8995A" d="M156.66,62.35c-.1.09-.18.19-.25.29-.09.14-.15.29-.19.45h-.3v-3.51h.31c.03.25.07.5.1.74.13.56.38,1.02.73,1.38.48.51,1.13.76,1.94.76.54,0,.99-.17,1.35-.5s.53-.75.53-1.26c0-.36-.16-.7-.48-1.04-.28-.3-.7-.6-1.25-.91l-1.44-.79c-.48-.26-.86-.6-1.15-1.03-.34-.5-.51-1.04-.51-1.62,0-.67.24-1.23.71-1.69.47-.46,1.06-.69,1.78-.69.41,0,.77.06,1.07.19.24.1.5.26.76.48.1-.1.19-.2.26-.31s.13-.25.16-.42h.31v3.53h-.31c0-.76-.16-1.39-.49-1.89-.4-.62-1-.93-1.8-.93-.43,0-.78.13-1.05.4-.28.27-.41.61-.41,1.03,0,.39.14.74.43,1.03.24.25.71.57,1.4.95l1.44.79c.54.29.95.67,1.22,1.12.23.39.35.83.35,1.31,0,.85-.28,1.55-.83,2.08s-1.23.8-2.04.8c-.37,0-.74-.07-1.1-.2-.42-.18-.83-.36-1.24-.55Z"/>
+      </g>
+      <g>
+        <path fill="#B8995A" d="M4.65,81.04c0,.53.02.59.56.59h1.54c1.06,0,1.26-.14,1.48-1.11l.1-.47c.14-.18.64-.16.76.02-.04.63-.06,1.36-.06,2.11s.02,1.46.06,2.05c-.12.18-.62.2-.76.02l-.1-.47c-.22-.95-.42-1.11-1.48-1.11h-1.54c-.54,0-.56.06-.56.59v2.67c0,1.84.12,1.97,1.02,2.11l.74.1c.14.12.14.57,0,.69-1.24-.04-2.21-.06-3.17-.06s-1.91.02-3.11.06c-.16-.12-.16-.57,0-.69l.66-.1c.9-.14,1.02-.28,1.02-2.11v-7.35c0-1.84-.12-1.97-1.02-2.15l-.4-.06c-.18-.12-.18-.61.04-.69.44.02.9.04,1.38.04.48.02.96.02,1.44.02h4.19c1.28,0,2.41-.02,2.69-.06,0,.34,0,1.76.04,3.08-.08.22-.52.24-.76.08-.22-.81-.38-1.28-.58-1.54-.34-.41-.94-.65-1.95-.65h-1.55c-.66,0-.66.04-.66.81v3.57Z"/>
+        <path fill="#B8995A" d="M16.21,78.94c0-1.97-.04-2.19-.88-2.31l-.54-.08c-.2-.1-.2-.59.04-.69,1.5-.1,3.05-.18,4.94-.18,1.69,0,3.15.26,3.91.71,1.16.67,1.75,1.66,1.75,2.92,0,1.76-1.2,2.51-2.11,2.96-.2.1-.2.22-.1.43,1.32,2.65,2.13,4.13,3.09,4.94.52.41,1.04.53,1.34.55.18.1.18.4.08.51-.32.14-.96.18-1.57.18-1.83,0-2.99-.65-3.87-2.07-.64-1.05-1.1-2.01-1.55-3.06-.24-.53-.56-.69-1.06-.69-.7,0-.74.04-.74.43v2.43c0,1.82.12,1.95,1.02,2.11l.54.1c.14.1.14.57,0,.69-1.06-.04-1.97-.06-2.93-.06s-1.87.02-2.91.06c-.16-.12-.16-.59,0-.69l.54-.1c.9-.16,1.02-.3,1.02-2.11v-6.99ZM18.94,81.45c0,.69.06.75,1.24.75.72,0,1.14-.18,1.51-.55.34-.34.72-.97.72-2.13,0-1.78-1.06-2.92-2.61-2.92-.82,0-.82.06-.86,1.01v3.85Z"/>
+        <path fill="#B8995A" d="M34.9,84.32c-.48,0-.54.02-.66.4l-.74,2.29c-.12.39-.14.55-.14.71,0,.12.16.24.72.34l.6.1c.12.14.16.59-.04.69-.7-.04-1.49-.04-2.33-.06-.68,0-1.14.06-2.05.06-.22-.12-.2-.53-.06-.69l.54-.06c.48-.06.9-.22,1.22-.99.36-.79.7-1.74,1.24-3.16l1.79-4.82c.48-1.24.84-1.94.78-2.51.96-.22,1.69-1.19,1.73-1.19.26,0,.38.1.46.39.16.57.4,1.3.9,2.71l2.71,7.74c.42,1.19.6,1.62,1.34,1.76l.76.12c.12.1.16.57-.02.69-.96-.04-2.03-.06-3.07-.06s-1.77.02-2.69.06c-.22-.12-.26-.53-.04-.69l.64-.1c.46-.08.54-.22.54-.34,0-.14-.14-.61-.38-1.34l-.54-1.7c-.1-.32-.26-.36-.96-.36h-2.23ZM37.03,83.27c.46,0,.58-.06.4-.57l-.52-1.6c-.28-.85-.54-1.66-.72-2.07-.2.43-.52,1.26-.82,2.17l-.5,1.48c-.2.53-.08.59.42.59h1.73Z"/>
+        <path fill="#B8995A" d="M59.6,85.42c0,1.28,0,2.53.04,3.18-.14.24-.7.45-1.18.45-.02,0-.68-1.01-1.62-2.15l-4.61-5.65c-1.14-1.42-1.81-2.23-2.17-2.53-.1.2-.1.53-.1,1.26v3.83c0,1.6.08,3.08.3,3.61.18.41.64.53,1.16.63l.56.08c.16.16.12.57,0,.69-1.08-.04-1.87-.06-2.67-.06-.74,0-1.48.02-2.23.06-.12-.12-.16-.53,0-.69l.34-.06c.54-.12.92-.24,1.1-.65.2-.53.28-2.01.28-3.61v-5.02c0-1.09,0-1.4-.14-1.68-.14-.34-.44-.53-1.14-.67l-.56-.08c-.14-.16-.12-.63.08-.69.94.04,1.93.06,2.75.06.68,0,1.26-.02,1.68-.06.2.89,1.49,2.39,3.29,4.5l1.67,1.95c.9,1.03,1.46,1.72,1.91,2.17.08-.2.08-.53.08-.89v-2.73c0-1.6-.08-3.08-.3-3.61-.18-.41-.62-.53-1.16-.63l-.54-.08c-.16-.16-.12-.57,0-.69,1.08.04,1.85.06,2.67.06.74,0,1.46-.02,2.23-.06.12.12.16.53,0,.69l-.36.06c-.52.12-.9.24-1.08.65-.22.53-.3,2.01-.3,3.61v4.72Z"/>
+        <path fill="#B8995A" d="M73.12,89.06c-1.77-.06-3.51-.51-4.78-1.46-1.44-1.09-2.53-2.73-2.53-5.17s1.04-4.11,2.41-5.23c1.42-1.17,3.45-1.76,5.52-1.76s3.51.47,4.11.51c0,.36.06,1.94.24,3.08-.08.24-.62.32-.76.14-.54-1.84-1.81-2.82-3.75-2.82-2.21,0-4.59,1.88-4.59,5.81s2.29,6.04,4.68,6.04,3.53-1.72,4.07-3.06c.16-.16.64-.1.76.14-.14,1.46-.48,2.65-.76,3.1-.98.28-2.21.65-3.59.69l-.54.75c-.16.2-.12.26.18.41.74.4,1.22.91,1.22,1.68,0,1.09-1.24,1.84-2.53,1.84-.96,0-1.54-.32-1.54-.87,0-.36.26-.65.64-.65.56,0,.92.73,1.36.73.22,0,.52-.18.52-.49,0-.63-.8-1.13-1.51-1.42l-.06-.16,1.24-1.82Z"/>
+        <path fill="#B8995A" d="M97.15,82.2c0,4.31-2.91,6.89-7.2,6.89-4.01,0-6.92-2.61-6.92-6.73,0-3.91,2.95-6.93,7.12-6.93s7,2.76,7,6.77ZM90,76.34c-2.45,0-3.77,2.27-3.77,5.57,0,2.41.86,6.28,4.11,6.28,2.61,0,3.63-2.53,3.63-5.73,0-3.38-1.49-6.12-3.97-6.12Z"/>
+        <path fill="#B8995A" d="M106.57,85.9c0,1.86.12,1.99,1.04,2.15l.56.1c.16.12.14.57-.02.69-1.08-.04-2.05-.06-2.99-.06s-1.95.02-3.03.06c-.16-.12-.16-.57,0-.69l.56-.1c.92-.16,1.04-.3,1.04-2.15v-7.27c0-1.86-.12-1.99-1.04-2.15l-.56-.1c-.16-.12-.16-.57,0-.69,1.08.04,2.07.06,3.03.06s1.93-.02,3.01-.06c.16.12.16.57,0,.69l-.56.1c-.92.16-1.04.3-1.04,2.15v7.27Z"/>
+        <path fill="#B8995A" d="M116.82,89.1c-1.83,0-2.97-.51-3.39-.75-.38-.43-.64-1.86-.64-3.2.14-.26.6-.28.76-.06.4,1.28,1.73,3.1,3.43,3.1,1.48,0,2.15-1.01,2.15-1.99,0-1.6-1.52-2.55-2.71-3.14-1.44-.71-2.99-1.9-3.01-3.85,0-2.23,1.73-3.77,4.62-3.77.66,0,1.48.08,2.27.32.26.08.44.12.68.16.16.43.36,1.5.36,2.82-.1.24-.6.26-.78.06-.34-1.01-1.2-2.45-2.63-2.45-1.32,0-2.03.85-2.03,1.84,0,.91.82,1.74,1.81,2.25l1.32.69c1.24.65,2.81,1.8,2.81,3.97,0,2.43-2.01,4.01-5.02,4.01Z"/>
+        <path fill="#B8995A" d="M144.61,85.5c0,.93.08,1.56.34,1.88.26.34.62.49,2.07.49,1.81,0,2.37-.06,3.55-2.35.16-.2.62-.12.76.12-.1,1.03-.58,2.67-.86,3.2-.52-.02-1.28-.04-2.09-.04-.8-.02-1.69-.02-2.51-.02h-2.67c-.92,0-1.91.02-3.15.06-.18-.12-.22-.57-.06-.69l.76-.1c.9-.14,1.02-.28,1.02-2.11v-7.35c0-1.84-.12-1.97-1.02-2.13l-.58-.08c-.2-.12-.2-.57.04-.69,1.04.04,2.03.06,2.99.06s1.95-.02,2.95-.06c.16.12.16.57,0,.69l-.52.08c-.9.16-1.02.3-1.02,2.13v6.91Z"/>
+        <path fill="#B8995A" d="M156.09,78.59c0-1.84-.12-1.97-1.02-2.13l-.5-.1c-.16-.12-.18-.55.04-.67.96.04,1.95.06,2.91.06s1.95-.02,2.91-.06c.16.12.16.55,0,.67l-.48.08c-.9.18-1.02.32-1.02,2.15v4.56c0,2.31.26,4.86,3.29,4.86,2.55,0,3.33-2.21,3.33-4.92v-2.39c0-1.6-.08-3.1-.3-3.61-.18-.41-.62-.53-1.16-.63l-.54-.1c-.16-.16-.12-.55,0-.67,1.08.04,1.85.06,2.67.06.74,0,1.48-.02,2.23-.06.12.12.16.51,0,.67l-.36.08c-.52.12-.9.24-1.08.65-.22.51-.3,2.01-.3,3.61v2.21c0,1.86-.18,3.55-1.28,4.76-.88.93-2.33,1.42-3.95,1.42-1.51,0-2.87-.24-3.95-1.11-1.04-.85-1.48-2.31-1.48-4.46v-4.94Z"/>
+        <path fill="#B8995A" d="M174.44,78.94c0-1.97-.04-2.19-.88-2.31l-.54-.08c-.2-.1-.2-.59.04-.69,1.5-.1,3.05-.18,4.94-.18,1.69,0,3.15.26,3.91.71,1.16.67,1.75,1.66,1.75,2.92,0,1.76-1.2,2.51-2.11,2.96-.2.1-.2.22-.1.43,1.32,2.65,2.13,4.13,3.09,4.94.52.41,1.04.53,1.34.55.18.1.18.4.08.51-.32.14-.96.18-1.57.18-1.83,0-2.99-.65-3.87-2.07-.64-1.05-1.1-2.01-1.55-3.06-.24-.53-.56-.69-1.06-.69-.7,0-.74.04-.74.43v2.43c0,1.82.12,1.95,1.02,2.11l.54.1c.14.1.14.57,0,.69-1.06-.04-1.97-.06-2.93-.06s-1.87.02-2.91.06c-.16-.12-.16-.59,0-.69l.54-.1c.9-.16,1.02-.3,1.02-2.11v-6.99ZM177.17,81.45c0,.69.06.75,1.24.75.72,0,1.14-.18,1.51-.55.34-.34.72-.97.72-2.13,0-1.78-1.06-2.92-2.61-2.92-.82,0-.82.06-.86,1.01v3.85Z"/>
+        <path fill="#B8995A" d="M192.94,77.23c0-.47,0-.57-.48-.57h-1.24c-1.46,0-1.87.79-2.47,2.23-.24.12-.62.08-.74-.18.42-1.36.52-2.59.66-3.36.08-.06.18-.1.28-.1s.2.02.28.08c.1.34.16.41,1.67.41h7.42c1.32,0,1.61-.02,1.79-.43.08-.04.14-.06.26-.06s.26.08.3.14c-.2.67-.34,2.27-.3,3.4-.1.18-.64.22-.74.06-.34-1.26-.62-2.19-2.11-2.19h-1.2c-.48,0-.54.06-.54.57v8.71c0,1.84.12,1.97,1.02,2.11l.8.1c.14.12.14.57,0,.69-1.3-.04-2.29-.06-3.19-.06-.96,0-1.99.02-3.39.06-.16-.12-.16-.57,0-.69l.9-.1c.9-.14,1.02-.28,1.02-2.11v-8.71Z"/>
+        <path fill="#B8995A" d="M218.41,82.2c0,4.31-2.91,6.89-7.2,6.89-4.01,0-6.92-2.61-6.92-6.73,0-3.91,2.95-6.93,7.12-6.93s7,2.76,7,6.77ZM211.25,76.34c-2.45,0-3.77,2.27-3.77,5.57,0,2.41.86,6.28,4.11,6.28,2.61,0,3.63-2.53,3.63-5.73,0-3.38-1.49-6.12-3.97-6.12Z"/>
+        <path fill="#B8995A" d="M235.7,85.42c0,1.28,0,2.53.04,3.18-.14.24-.7.45-1.18.45-.02,0-.68-1.01-1.62-2.15l-4.61-5.65c-1.14-1.42-1.81-2.23-2.17-2.53-.1.2-.1.53-.1,1.26v3.83c0,1.6.08,3.08.3,3.61.18.41.64.53,1.16.63l.56.08c.16.16.12.57,0,.69-1.08-.04-1.87-.06-2.67-.06-.74,0-1.48.02-2.23.06-.12-.12-.16-.53,0-.69l.34-.06c.54-.12.92-.24,1.1-.65.2-.53.28-2.01.28-3.61v-5.02c0-1.09,0-1.4-.14-1.68-.14-.34-.44-.53-1.14-.67l-.56-.08c-.14-.16-.12-.63.08-.69.94.04,1.93.06,2.75.06.68,0,1.26-.02,1.67-.06.2.89,1.49,2.39,3.29,4.5l1.67,1.95c.9,1.03,1.46,1.72,1.91,2.17.08-.2.08-.53.08-.89v-2.73c0-1.6-.08-3.08-.3-3.61-.18-.41-.62-.53-1.16-.63l-.54-.08c-.16-.16-.12-.57,0-.69,1.08.04,1.85.06,2.67.06.74,0,1.46-.02,2.23-.06.12.12.16.53,0,.69l-.36.06c-.52.12-.9.24-1.08.65-.22.53-.3,2.01-.3,3.61v4.72Z"/>
+      </g>
     </svg>
-    <div class="eyebrow">François Lurton</div>
     <h1 class="display-title">Audit<br>des gammes</h1>
     <p class="subtitle">Votre retour terrain est essentiel.<br>Notez chaque référence de 1 à 10.</p>
     <div class="time-pill">
@@ -231,18 +238,22 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
     <div class="nav-meta" id="gNavMeta"></div>
   </div>
   <div class="content">
-    <div class="section-eyebrow">Évaluation gamme</div>
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+      <span style="background:var(--ink);color:white;font-size:10px;font-weight:500;padding:0.2rem 0.55rem;border-radius:100px;letter-spacing:0.05em;">ÉTAPE 1 / 2</span>
+      <span class="section-eyebrow" style="margin:0;">Évaluation de la gamme</span>
+    </div>
     <h2 class="section-title" id="gTitle"></h2>
-    <p class="section-hint">Notez cette gamme dans son ensemble.</p>
+    <p class="section-hint">Notez ici la gamme <strong>dans son ensemble</strong> — positionnement global, cohérence, compétitivité. Vous noterez ensuite chaque référence individuellement.</p>
     <div class="criteria-list" id="gCriteria"></div>
     <div style="margin-top:2rem">
       <div class="comment-lbl">Commentaire général sur la gamme</div>
       <div class="comment-block"><textarea id="gComment" placeholder="Points forts, points faibles, suggestions…"></textarea></div>
     </div>
+    <div class="error-msg" id="gErrorMsg">Merci de noter tous les critères avant de continuer.</div>
   </div>
   <div class="bottom-nav">
-    <button class="btn-back" onclick="goOverview()">← Retour</button>
-    <button class="btn-next" onclick="validateGamme()">Évaluer les références →</button>
+    <button class="btn-back" onclick="goOverview()">← Vue d'ensemble</button>
+    <button class="btn-next" onclick="validateGamme()">Étape 2 : les références →</button>
   </div>
 </div>
 
@@ -254,17 +265,22 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
   </div>
   <div class="dots-nav" id="dotsNav"></div>
   <div class="content">
-    <div class="section-eyebrow" id="rEyebrow"></div>
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+      <span style="background:var(--gold);color:white;font-size:10px;font-weight:500;padding:0.2rem 0.55rem;border-radius:100px;letter-spacing:0.05em;">ÉTAPE 2 / 2</span>
+      <span class="section-eyebrow" style="margin:0;" id="rEyebrow"></span>
+    </div>
     <h2 class="section-title" id="rTitle"></h2>
-    <p class="section-hint">Notez cette référence de 1 à 10.</p>
+    <p class="section-hint">Notez cette référence spécifique de 1 à 10.</p>
     <div class="criteria-list" id="rCriteria"></div>
     <div style="margin-top:2rem">
       <div class="comment-lbl">Point fort ou frein principal</div>
       <div class="comment-block"><textarea id="rComment" placeholder="Ce qui marche, ce qui bloque…"></textarea></div>
     </div>
+    <div class="error-msg" id="rErrorMsg">Merci de noter tous les critères avant de continuer.</div>
   </div>
   <div class="bottom-nav">
     <button class="btn-back" id="btnBack" onclick="prevRef()">←</button>
+    <button class="btn-back" onclick="goOverview()" style="white-space:nowrap;">Vue d'ensemble</button>
     <button class="btn-next" id="btnNext" onclick="nextRef()">Référence suivante →</button>
   </div>
 </div>
@@ -299,21 +315,22 @@ const CATALOGUE = [
 ];
 
 const GAMME_CRIT = [
-  { id:"positionnement", label:"Positionnement & clarté", desc:"La gamme est-elle clairement positionnée (entrée / milieu / haut de gamme) ?" },
-  { id:"identite", label:"Cohérence visuelle", desc:"Les étiquettes et packagings sont-ils cohérents entre eux ?" },
-  { id:"competitivite", label:"Compétitivité prix", desc:"Les prix sont-ils justifiés face à la concurrence ?" },
-  { id:"argumentaire", label:"Facilité à argumenter", desc:"Disposez-vous d'éléments différenciants clairs à mettre en avant ?" },
+  { id:"positionnement", label:"Positionnement", desc:"La gamme est-elle clairement positionnée (entrée / milieu / haut de gamme) ?" },
+  { id:"identite", label:"Cohérence de gamme", desc:"Les étiquettes et packagings sont-ils cohérents entre eux ?" },
+  { id:"competitivite", label:"Compétitivité", desc:"Les prix sont-ils justifiés face à la concurrence ?" },
+  { id:"argumentaire", label:"Argumentaire", desc:"Disposez-vous d'éléments différenciants clairs à mettre en avant ?" },
   { id:"storytelling", label:"Histoire & storytelling", desc:"Y a-t-il un récit vendeur fort autour de cette gamme ?" },
 ];
 
 const REF_CRIT = [
   { id:"qualite_prix", label:"Rapport qualité/prix", desc:"Le prix est-il justifié aux yeux du client ?" },
-  { id:"etiquette", label:"Attractivité de l'étiquette", desc:"L'étiquette donne-t-elle envie à première vue ?" },
+  { id:"etiquette", label:"Attractivité de l'étiquette", desc:"L'étiquette plaît-elle aux clients ?" },
   { id:"facilite_vente", label:"Facilité à vendre", desc:"Ce vin est-il simple à proposer et à défendre ?" },
-  { id:"retours", label:"Retours clients", desc:"Les clients en parlent-ils positivement, en reprennent-ils ?" },
+  { id:"retours", label:"Retours clients", desc:"Les clients en parlent-ils positivement ? Réassort ?" },
 ];
 
-let S = { userName:'', sheetUrl:'', gi:0, ri:0, gScores:{}, rScores:{}, done:{} };
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw8OYV8-woOqAcdwu35hlY8rxoj9HFtg8cbZgAPrAlN8HF7HXUSFOuPCKBO2IuFYURV/exec';
+let S = { userName:'', sheetUrl: SHEET_URL, gi:0, ri:0, gScores:{}, rScores:{}, done:{} };
 const TOTAL_REFS = CATALOGUE.reduce((a,g)=>a+g.refs.length,0);
 
 function save() { try { localStorage.setItem('lurton_v2', JSON.stringify(S)); } catch(e){} }
@@ -326,8 +343,8 @@ function show(id) {
 }
 
 window.onload = function() {
-  const url = localStorage.getItem('lurton_sheet_url');
-  if (url) { S.sheetUrl = url; show('screen-welcome'); checkResume(); }
+  show('screen-welcome');
+  checkResume();
 };
 
 function saveConfig() {
@@ -435,12 +452,28 @@ function setGScore(gi, cid, score, btn) {
     b.className = 'score-btn';
     if (i+1===score) b.classList.add(score>=8?'active-high':score>=5?'active-mid':'active-low');
   });
-  flash();
+  // clear error state for this criterion
+  btn.closest('.criterion').classList.remove('has-error');
+  const allFilled = GAMME_CRIT.every(c => S.gScores[gi] && S.gScores[gi][c.id]);
+  if (allFilled) document.getElementById('gErrorMsg').classList.remove('show');
 }
 
 function validateGamme() {
-  if (!S.gScores[S.gi]) S.gScores[S.gi] = {};
-  S.gScores[S.gi].comment = document.getElementById('gComment').value;
+  const gi = S.gi;
+  const scores = S.gScores[gi] || {};
+  const missing = GAMME_CRIT.filter(c => !scores[c.id]);
+  if (missing.length > 0) {
+    document.getElementById('gErrorMsg').classList.add('show');
+    // highlight missing criteria
+    document.querySelectorAll('#gCriteria .criterion').forEach((el, i) => {
+      el.classList.toggle('has-error', !scores[GAMME_CRIT[i].id]);
+    });
+    document.getElementById('gErrorMsg').scrollIntoView({behavior:'smooth', block:'nearest'});
+    return;
+  }
+  document.getElementById('gErrorMsg').classList.remove('show');
+  if (!S.gScores[gi]) S.gScores[gi] = {};
+  S.gScores[gi].comment = document.getElementById('gComment').value;
   save(); openRefs();
 }
 
@@ -479,6 +512,7 @@ function renderRef() {
   });
 
   document.getElementById('rCriteria').innerHTML = REF_CRIT.map(c => buildCrit(c, saved[c.id], `setRScore(${gi},${ri},'${c.id}',`)).join('');
+  document.getElementById('rErrorMsg').classList.remove('show');
 }
 
 function setRScore(gi, ri, cid, score, btn) {
@@ -490,7 +524,10 @@ function setRScore(gi, ri, cid, score, btn) {
     b.className = 'score-btn';
     if (i+1===score) b.classList.add(score>=8?'active-high':score>=5?'active-mid':'active-low');
   });
-  flash();
+  // clear error state for this criterion
+  btn.closest('.criterion').classList.remove('has-error');
+  const allFilled = REF_CRIT.every(c => S.rScores[gi] && S.rScores[gi][ri] && S.rScores[gi][ri][c.id]);
+  if (allFilled) document.getElementById('rErrorMsg').classList.remove('show');
 }
 
 function saveRef() {
@@ -509,8 +546,20 @@ function prevRef() {
 
 function nextRef() {
   saveRef();
-  const g = CATALOGUE[S.gi];
-  if (S.ri === g.refs.length-1) { submitGamme(S.gi); return; }
+  const gi = S.gi, ri = S.ri;
+  const scores = (S.rScores[gi]||{})[ri] || {};
+  const missing = REF_CRIT.filter(c => !scores[c.id]);
+  if (missing.length > 0) {
+    document.getElementById('rErrorMsg').classList.add('show');
+    document.querySelectorAll('#rCriteria .criterion').forEach((el, i) => {
+      el.classList.toggle('has-error', !scores[REF_CRIT[i].id]);
+    });
+    document.getElementById('rErrorMsg').scrollIntoView({behavior:'smooth', block:'nearest'});
+    return;
+  }
+  document.getElementById('rErrorMsg').classList.remove('show');
+  const g = CATALOGUE[gi];
+  if (ri === g.refs.length-1) { submitGamme(gi); return; }
   S.ri++; renderRef(); window.scrollTo(0,0);
 }
 
@@ -544,19 +593,14 @@ function showComplete() {
 
 function restartAudit() {
   localStorage.removeItem('lurton_v2');
-  S = { userName:'', sheetUrl:S.sheetUrl, gi:0, ri:0, gScores:{}, rScores:{}, done:{} };
+  S = { userName:'', sheetUrl: SHEET_URL, gi:0, ri:0, gScores:{}, rScores:{}, done:{} };
   show('screen-welcome');
   document.getElementById('resumeBanner').style.display='none';
   document.getElementById('userName').value='';
   document.getElementById('btnStart').disabled=true;
 }
 
-// ── ANIMATION ─────────────────────────────────────────────────────
-function flash() {
-  const el = document.getElementById('flash');
-  el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'), 550);
-}
+// ── END ───────────────────────────────────────────────────────────
 </script>
 </body>
 </html>
