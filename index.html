@@ -199,6 +199,11 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 .criterion.has-error .crit-label::after { content:" *"; color:#B33; }
 .criterion.has-error .score-row .score-btn { border-color:#F5C0C0; }
 
+.welcome-intro { margin-bottom: 2rem; text-align: left; }
+.welcome-intro .intro-lead { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.65; margin-bottom: 1rem; }
+.welcome-intro .intro-body { font-size: 13px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 1rem; }
+.welcome-intro .intro-thanks { font-size: 13px; color: var(--ink-muted); font-style: italic; text-align: center; margin-top: 1.25rem; }
+
 /* LANG SCREEN */
 #screen-lang { justify-content: center; align-items: center; min-height: 100vh; }
 .lang-inner { max-width: 360px; width: 100%; padding: 2rem; text-align: center; }
@@ -290,7 +295,7 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
       </g>
     </svg>
     <h1 class="display-title" id="welcomeTitle">Audit des gammes</h1>
-    <p class="subtitle" id="welcomeIntro">Merci d'avance pour vos retours.<br>Chaque référence / gamme est à noter de 1 à 10.</p>
+    <div id="welcomeIntro"></div>
     <div class="time-pill" id="timePill">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8995A" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span id="timePillText">Environ 45 min · 11 gammes · 72 références</span>
@@ -416,8 +421,13 @@ const CATALOGUE = [
 const I18N = {
   fr: {
     // Welcome
-    intro: "Vous êtes au contact direct de nos clients : votre perception de nos gammes est une information stratégique. Cet audit nous permettra d'optimiser notre offre — positionnement, packaging, argumentaire — en nous appuyant sur votre expertise terrain.",
-    time_pill: "Environ 45 min · 11 gammes · 72 références",
+    intro: `<div class="welcome-intro">
+      <p class="intro-lead">Dans le cadre d'une réflexion globale sur nos gammes, nous lançons un audit général et avons besoin de votre regard terrain.</p>
+      <p class="intro-body">Ce questionnaire a pour objectif de dresser un état des lieux de notre portefeuille : identifier les gammes et références qui performent, celles qui rencontrent des difficultés, et repérer les ajustements nécessaires, qu'ils soient d'ordre technique, graphique ou liés aux outils d'aide à la vente.</p>
+      <p class="intro-body">Vous pouvez le compléter en plusieurs fois.</p>
+      <p class="intro-thanks">Merci d'avance pour votre aide.</p>
+    </div>`,
+    time_pill: "Environ 40 min · 11 gammes · 72 références",
     name_label: "Votre prénom",
     name_placeholder: "Ex : Sophie",
     btn_start: "Commencer →",
@@ -483,8 +493,12 @@ const I18N = {
   },
   en: {
     // Welcome
-    intro: "You are in direct contact with our clients: your perception of our ranges is strategic information. This audit will help us optimise our offering — positioning, packaging, sales pitch — drawing on your field expertise.",
-    time_pill: "Approx. 45 min · 11 ranges · 72 references",
+    intro: `<div class="welcome-intro">
+      <p class="intro-lead">As part of a broader review of our ranges, we are launching a general audit and need your field perspective.</p>
+      <p class="intro-body">This questionnaire aims to assess the current state of our portfolio: identifying the ranges and references that are performing well, those facing challenges, and pinpointing the adjustments needed, whether technical, visual, or related to sales support tools.</p>
+      <p class="intro-body">You can fill it in over several sessions.</p>
+    </div>`,
+    time_pill: "Approx. 40 min · 11 ranges · 72 references",
     name_label: "Your first name",
     name_placeholder: "E.g. Sophie",
     btn_start: "Start →",
@@ -589,7 +603,7 @@ function applyLang() {
   const t = I18N[LANG];
   // Welcome
   document.getElementById('welcomeTitle').textContent = t.welcome_title;
-  document.getElementById('welcomeIntro').textContent = t.intro;
+  document.getElementById('welcomeIntro').innerHTML = t.intro;
   document.getElementById('timePillText').textContent = t.time_pill;
   document.getElementById('nameLabel').textContent = t.name_label;
   document.getElementById('userName').placeholder = t.name_placeholder;
