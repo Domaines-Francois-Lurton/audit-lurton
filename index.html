@@ -148,6 +148,10 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
 @keyframes spin { to { transform: rotate(360deg); } }
 .syncing-label { font-size: 13px; color: var(--ink-soft); }
 
+/* SKIP REF */
+.btn-skip-ref { background: none; border: none; font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; border-radius: 100px; transition: background 0.2s, color 0.2s; }
+.btn-skip-ref:hover { background: var(--border); color: var(--ink-soft); }
+
 /* COMPLETE */
 #screen-complete { justify-content: center; align-items: center; padding: 2rem; text-align: center; }
 .complete-inner { max-width: 380px; }
@@ -381,6 +385,12 @@ html, body { height: 100%; background: var(--cream); color: var(--ink); font-fam
       <div class="comment-block"><textarea id="rComment" placeholder="Ce qui marche, ce qui bloque…"></textarea></div>
     </div>
     <div class="error-msg" id="rErrorMsg">Merci de noter tous les critères avant de continuer.</div>
+    <div style="margin-top:1.25rem;text-align:center;">
+      <button class="btn-skip-ref" id="btnSkipRef" onclick="skipRef()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <span id="btnSkipRefLabel">Passer cette référence</span>
+      </button>
+    </div>
   </div>
   <div class="bottom-nav">
     <button class="btn-back" id="btnBackRef" onclick="prevRef()">←</button>
@@ -463,6 +473,7 @@ const I18N = {
     lock_notice: "Cette référence a déjà été notée — les réponses sont verrouillées.",
     btn_next_ref: "Référence suivante →",
     btn_validate: "Valider la gamme ✓",
+    skip_ref: "Passer cette référence",
     scale_low: "Insuffisant",
     scale_high: "Excellent",
     // Toast & syncing
@@ -534,6 +545,7 @@ const I18N = {
     lock_notice: "This reference has already been rated — answers are locked.",
     btn_next_ref: "Next reference →",
     btn_validate: "Submit range ✓",
+    skip_ref: "Skip this reference",
     scale_low: "Poor",
     scale_high: "Excellent",
     // Toast & syncing
@@ -628,7 +640,7 @@ function applyLang() {
   // Ref screen
   document.getElementById('step2Badge').textContent = t.step2;
   document.getElementById('step2Hint').textContent = t.step2_hint;
-  document.getElementById('rCommentLabel').textContent = t.comment_ref;
+  document.getElementById('btnSkipRefLabel').textContent = t.skip_ref;
   document.getElementById('rComment').placeholder = t.comment_ref_ph;
   document.getElementById('lockNoticeText').textContent = t.lock_notice;
   document.getElementById('rErrorMsg').textContent = t.error_criteria;
@@ -826,7 +838,7 @@ function renderRef() {
 
   const totalDone = g.refs.filter((_,i) => {
     const sc = (S.rScores[gi]||{})[i]||{};
-    return REF_CRIT().every(c => sc[c.id]);
+    return REF_CRIT().every(c => sc[c.id]) || sc.skipped === true;
   }).length;
   const remaining = g.refs.length - totalDone;
 
@@ -838,13 +850,13 @@ function renderRef() {
   document.getElementById('btnNext').textContent = isLast ? T('btn_validate') : T('btn_next_ref');
   document.getElementById('rComment').value = saved.comment || '';
 
-  const isLocked = REF_CRIT().every(c => saved[c.id]);
+  const isLocked = REF_CRIT().every(c => saved[c.id]) || saved.skipped === true;
 
   const dots = document.getElementById('dotsNav');
   dots.innerHTML = '';
   g.refs.forEach((_,i) => {
     const sc = (S.rScores[gi]||{})[i]||{};
-    const isDone = REF_CRIT().every(c => sc[c.id]);
+    const isDone = REF_CRIT().every(c => sc[c.id]) || sc.skipped === true;
     const d = document.createElement('div');
     d.className = 'dot' + (i===ri?' current':isDone?' done':'');
     d.onclick = () => { saveRef(); S.ri=i; renderRef(); window.scrollTo(0,0); };
@@ -859,6 +871,7 @@ function renderRef() {
 
   const lockNotice = document.getElementById('lockNotice');
   lockNotice.style.display = isLocked ? 'flex' : 'none';
+  document.getElementById('btnSkipRef').style.display = isLocked ? 'none' : 'inline-flex';
 }
 
 function setRScore(gi, ri, cid, score, btn) {
@@ -873,6 +886,18 @@ function setRScore(gi, ri, cid, score, btn) {
   btn.closest('.criterion').classList.remove('has-error');
   const allFilled = REF_CRIT().every(c => S.rScores[gi] && S.rScores[gi][ri] && S.rScores[gi][ri][c.id]);
   if (allFilled) document.getElementById('rErrorMsg').classList.remove('show');
+}
+
+function skipRef() {
+  saveRef();
+  const gi = S.gi, ri = S.ri;
+  if (!S.rScores[gi]) S.rScores[gi] = {};
+  // Mark as skipped — empty object with skipped flag, no criteria scores
+  S.rScores[gi][ri] = { skipped: true, comment: '' };
+  save();
+  const g = CATALOGUE[gi];
+  if (ri === g.refs.length - 1) { submitGamme(gi); return; }
+  S.ri++; renderRef(); window.scrollTo(0,0);
 }
 
 function saveRef() {
@@ -893,7 +918,8 @@ function nextRef() {
   saveRef();
   const gi = S.gi, ri = S.ri;
   const scores = (S.rScores[gi]||{})[ri] || {};
-  const missing = REF_CRIT().filter(c => !scores[c.id]);
+  const isSkipped = scores.skipped === true;
+  const missing = isSkipped ? [] : REF_CRIT().filter(c => !scores[c.id]);
   if (missing.length > 0) {
     document.getElementById('rErrorMsg').classList.add('show');
     document.querySelectorAll('#rCriteria .criterion').forEach((el, i) => {
